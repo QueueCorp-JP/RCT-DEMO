@@ -8,7 +8,7 @@ import settingsStore, {
 } from '@/features/stores/settings'
 import slideStore from '@/features/stores/slide'
 import { AssistantText } from './assistantText'
-import { ChatLog } from './chatLog'
+import ChatLog from './chatLog'
 import { IconButton } from './iconButton'
 import Settings from './settings'
 import { Webcam } from './webcam'
@@ -239,7 +239,7 @@ export const Menu = () => {
       <div className="relative">
         {slideMode && slideVisible && <Slides markdown={markdownContent} />}
       </div>
-      {showChatLog && <ChatLog />}
+      {showChatLog && <ChatLog messages={homeStore.getState().chatLog} />}
       {showSettings && <Settings onClickClose={() => setShowSettings(false)} />}
       {!showChatLog &&
         assistantMessage &&

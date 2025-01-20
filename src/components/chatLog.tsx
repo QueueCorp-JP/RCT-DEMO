@@ -1,31 +1,91 @@
-import Image from 'next/image'
 import { useEffect, useRef } from 'react'
-import { EMOTIONS } from '@/features/messages/messages'
+import { Message } from '@/features/messages/messages'
+import Image from 'next/image'
 
-import homeStore from '@/features/stores/home'
-import settingsStore from '@/features/stores/settings'
-import { messageSelectors } from '@/features/messages/messageSelectors'
+interface Props {
+  messages: Message[]
+  characterName?: string
+}
 
-export const ChatLog = () => {
+interface ChatProps {
+  role: string
+  message: string
+  characterName?: string
+}
+
+type MessageItem = {
+  type: 'text'
+  text: string
+} | {
+  type: 'image'
+  image: string
+}
+
+const Chat = ({ role, message, characterName }: ChatProps) => {
+  return (
+    <div
+      className={`mx-auto max-w-[32rem] my-16 ${
+        role === 'user' ? 'pl-40' : 'pr-40'
+      }`}
+    >
+      <div
+        className={`px-24 py-8 rounded-t-8 font-bold tracking-wider ${
+          role !== 'user'
+            ? 'bg-secondary text-white'
+            : 'bg-base text-primary'
+        }`}
+      >
+        {role !== 'user' ? (
+          <div className="flex items-center">
+            <Image
+              src="/images/rct-japan-logo.svg"
+              alt="RCT JAPAN"
+              width={24}
+              height={24}
+              className="mr-2"
+            />
+            <span>{characterName || 'CHARACTER'}</span>
+          </div>
+        ) : (
+          'YOU'
+        )}
+      </div>
+      <div className="bg-white rounded-b-8">
+        <div className="px-24 py-16">
+          <div
+            className={`typography-16 font-bold ${
+              role !== 'user' ? 'text-secondary' : 'text-primary'
+            }`}
+          >
+            {message.split('\n').map((line: string, index: number) => {
+              const isList = line.trim().startsWith('・')
+              const isEmpty = line.trim() === ''
+
+              return (
+                <div
+                  key={index}
+                  className={`${isList ? 'ml-16' : ''} ${
+                    isEmpty ? 'h-16' : ''
+                  }`}
+                >
+                  {line}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const ChatLog = ({ messages, characterName }: Props) => {
   const chatScrollRef = useRef<HTMLDivElement>(null)
 
-  const characterName = settingsStore((s) => s.characterName)
-  const messages = messageSelectors.getTextAndImageMessages(
-    homeStore((s) => s.chatLog)
-  )
-
   useEffect(() => {
-    chatScrollRef.current?.scrollIntoView({
-      behavior: 'auto',
-      block: 'center',
-    })
-  }, [])
-
-  useEffect(() => {
-    chatScrollRef.current?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-    })
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
   }, [messages])
 
   return (
@@ -42,74 +102,92 @@ export const ChatLog = () => {
                       message={msg.content}
                       characterName={characterName}
                     />
-                  );
+                  )
                 }
 
                 if (msg.content && Array.isArray(msg.content)) {
-                  const textContent = msg.content.find(item => item.type === 'text')?.text || '';
-                  const imageContent = msg.content.find(item => item.type === 'image')?.image;
+                  const content = msg.content as MessageItem[]
+                  const textContent = content.find(
+                    (item): item is { type: 'text'; text: string } =>
+                      item.type === 'text'
+                  )?.text || ''
+
+                  const imageContent = content.find(
+                    (item): item is { type: 'image'; image: string } =>
+                      item.type === 'image'
+                  )?.image
 
                   return (
-                    <div className={`mx-auto max-w-[32rem] my-16 ${msg.role === 'user' ? 'pl-40' : 'pr-40'}`}>
-                      <div className={`px-24 py-8 rounded-t-8 font-bold tracking-wider ${msg.role !== 'user' ? 'bg-secondary text-white' : 'bg-base text-primary'}`}>
+                    <div
+                      className={`mx-auto max-w-[32rem] my-16 ${
+                        msg.role === 'user' ? 'pl-40' : 'pr-40'
+                      }`}
+                    >
+                      <div
+                        className={`px-24 py-8 rounded-t-8 font-bold tracking-wider ${
+                          msg.role !== 'user'
+                            ? 'bg-secondary text-white'
+                            : 'bg-base text-primary'
+                        }`}
+                      >
                         {msg.role !== 'user' ? (
                           <div className="flex items-center">
-                            <img src="/images/rct-japan-logo.svg" alt="RCT JAPAN" className="h-6 w-auto mr-2" />
+                            <Image
+                              src="/images/rct-japan-logo.svg"
+                              alt="RCT JAPAN"
+                              width={24}
+                              height={24}
+                              className="mr-2"
+                            />
                             <span>{characterName || 'CHARACTER'}</span>
                           </div>
-                        ) : 'YOU'}
+                        ) : (
+                          'YOU'
+                        )}
                       </div>
                       <div className="bg-white rounded-b-8">
                         {textContent && (
                           <div className="px-24 py-16">
-                            <div className={`typography-16 font-bold ${msg.role !== 'user' ? 'text-secondary' : 'text-primary'}`}>
-                              {textContent.split('\n').map((line, index) => {
-                                // 箇条書きの行を検出
-                                const isList = line.trim().startsWith('・');
-                                // 空行を検出
-                                const isEmpty = line.trim() === '';
-                                
+                            <div
+                              className={`typography-16 font-bold ${
+                                msg.role !== 'user'
+                                  ? 'text-secondary'
+                                  : 'text-primary'
+                              }`}
+                            >
+                              {textContent.split('\n').map((line: string, index: number) => {
+                                const isList = line.trim().startsWith('・')
+                                const isEmpty = line.trim() === ''
+
                                 return (
-                                  <div 
+                                  <div
                                     key={index}
-                                    className={`
-                                      ${isEmpty ? 'h-4' : ''}
-                                      ${isList ? 'pl-4' : ''}
-                                      ${index > 0 ? 'mt-2' : ''}
-                                    `}
+                                    className={`${isList ? 'ml-16' : ''} ${
+                                      isEmpty ? 'h-16' : ''
+                                    }`}
                                   >
                                     {line}
                                   </div>
-                                );
+                                )
                               })}
                             </div>
                           </div>
                         )}
                         {imageContent && (
-                          <div className="px-4 pt-4 pb-4">
-                            <div className="relative w-full h-[300px]">
-                              <Image
-                                src={imageContent}
-                                alt="Product Image"
-                                className="rounded-lg"
-                                layout="fill"
-                                objectFit="contain"
-                                unoptimized
-                                priority
-                                onError={(e: any) => {
-                                  console.error('Image load error:', e);
-                                  console.error('Failed to load image:', imageContent);
-                                }}
-                              />
-                            </div>
+                          <div className="px-24 py-16">
+                            <Image
+                              src={imageContent}
+                              alt="Generated Image"
+                              width={512}
+                              height={512}
+                              className="w-full h-auto"
+                            />
                           </div>
                         )}
                       </div>
                     </div>
-                  );
+                  )
                 }
-
-                return null;
               })()}
             </div>
           )
@@ -119,67 +197,4 @@ export const ChatLog = () => {
   )
 }
 
-const Chat = ({
-  role,
-  message,
-  characterName,
-}: {
-  role: string
-  message: string
-  characterName: string
-}) => {
-  // アスタリスクを含まない形式に変換
-  const emotionPattern = new RegExp(`\\[(${EMOTIONS.join('|')})\\]\\s*`, 'g')
-  const processedMessage = message.replace(emotionPattern, '')
-
-  const roleColor =
-    role !== 'user' ? 'bg-secondary text-white ' : 'bg-base text-primary'
-  const roleText = role !== 'user' ? 'text-secondary' : 'text-primary'
-  const offsetX = role === 'user' ? 'pl-40' : 'pr-40'
-
-  return (
-    <div className={`mx-auto max-w-[32rem] my-16 ${offsetX}`}>
-      {role === 'code' ? (
-        <pre className="whitespace-pre-wrap break-words bg-[#1F2937] text-white p-16 rounded-8">
-          <code className="font-mono text-sm">{message}</code>
-        </pre>
-      ) : (
-        <>
-          <div
-            className={`px-24 py-8 rounded-t-8 font-bold tracking-wider ${roleColor}`}
-          >
-            {role !== 'user' ? (
-              <div className="flex items-center">
-                <img src="/images/rct-japan-logo.svg" alt="RCT JAPAN" className="h-6 w-auto mr-2" />
-                <span>{characterName || 'CHARACTER'}</span>
-              </div>
-            ) : 'YOU'}
-          </div>
-          <div className="px-24 py-16 bg-white rounded-b-8">
-            <div className={`typography-16 font-bold ${roleText}`}>
-              {processedMessage.split('\n').map((line, index) => {
-                // 箇条書きの行を検出
-                const isList = line.trim().startsWith('・');
-                // 空行を検出
-                const isEmpty = line.trim() === '';
-                
-                return (
-                  <div 
-                    key={index}
-                    className={`
-                      ${isEmpty ? 'h-4' : ''}
-                      ${isList ? 'pl-4' : ''}
-                      ${index > 0 ? 'mt-2' : ''}
-                    `}
-                  >
-                    {line}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </>
-      )}
-    </div>
-  )
-}
+export default ChatLog
