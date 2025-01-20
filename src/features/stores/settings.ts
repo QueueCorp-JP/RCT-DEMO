@@ -195,7 +195,7 @@ const settingsStore = create<SettingsState>()(
       selectAIModel: process.env.NEXT_PUBLIC_SELECT_AI_MODEL || 'gpt-4',
       localLlmUrl: process.env.NEXT_PUBLIC_LOCAL_LLM_URL || '',
       selectVoice:
-        (process.env.NEXT_PUBLIC_SELECT_VOICE as AIVoice) || 'nijivoice',
+        (process.env.NEXT_PUBLIC_SELECT_VOICE as AIVoice) || 'voicevox',
       koeiroParam: DEFAULT_PARAM,
       googleTtsType:
         process.env.NEXT_PUBLIC_GOOGLE_TTS_TYPE || 'en-US-Neural2-F',
