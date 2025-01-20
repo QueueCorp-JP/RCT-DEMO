@@ -325,7 +325,7 @@ const settingsStore = create<SettingsState>()(
       },
 
       // NijiVoice settings
-      nijivoiceApiKey: process.env.NEXT_PUBLIC_NIJIVOICE_API_KEY || '03796bbc-7e1a-4bad-89e7-7a53b3ef5903',
+      nijivoiceApiKey: process.env.NIJIVOICE_API_KEY || '',
       nijivoiceActorId: process.env.NEXT_PUBLIC_NIJIVOICE_ACTOR_ID || '',
       nijivoiceSpeed:
         parseFloat(process.env.NEXT_PUBLIC_NIJIVOICE_SPEED || '1.0') || 1.0,
