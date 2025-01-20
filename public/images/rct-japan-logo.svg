@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="160" height="60" viewBox="0 0 160 60" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <!-- 左側の三角形と矢印部分 -->
+    <g fill="#666666">
+        <polygon points="0,30 30,0 30,20 45,20 45,40 30,40 30,60"/>
+    </g>
+    
+    <!-- RCT テキスト部分 -->
+    <g fill="#1a237e">
+        <path d="M55,10 h35 v12 h-23 v28 h-12 z"/>
+        <path d="M95,10 h30 a15,15 0 0 1 0,30 h-30 v-30 z M113,22 v8 h12 a4,4 0 0 0 0,-8 z"/>
+        <path d="M130,10 h12 v40 h-12 z"/>
+    </g>
+</svg>

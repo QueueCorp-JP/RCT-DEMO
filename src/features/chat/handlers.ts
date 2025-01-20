@@ -173,17 +173,15 @@ export const processAIResponse = async (
       const { done, value } = await reader.read()
       if (done && receivedMessage.length === 0) break
 
-      if (value) receivedMessage += value
+      if (value) {
+        // アスタリスクを除去してから追加
+        receivedMessage += value.replace(/\*/g, '');
+      }
 
       // 返答を一文単位で切り出して処理する
       while (receivedMessage.length > 0) {
-        if (isCodeBlock && !receivedMessage.includes('```')) {
-          codeBlockText += receivedMessage
-          continue
-        }
-
-        if (receivedMessage.includes('```')) {
-          if (isCodeBlock) {
+        if (isCodeBlock) {
+          if (receivedMessage.includes('```')) {
             // コードブロックの終了処理
             const [codeEnd, ...restOfSentence] = receivedMessage.split('```')
             aiTextLog.push({
@@ -191,14 +189,32 @@ export const processAIResponse = async (
               content: codeBlockText + codeEnd,
             })
 
-            receivedMessage = restOfSentence.join('```')
-
+            receivedMessage = restOfSentence.join('```').trimStart()
             codeBlockText = ''
             isCodeBlock = false
+            continue
           } else {
-            // コードブロックの開始処理
+            // コードブロック中だが終了マークがまだない
+            codeBlockText += receivedMessage
+            receivedMessage = ''
+            continue
+          }
+        }
+
+        if (receivedMessage.includes('```')) {
+          // コードブロックの開始処理
+          const [beforeCode, ...rest] = receivedMessage.split('```')
+
+          // コードブロック前のテキストを処理
+          if (beforeCode.trim()) {
+            receivedMessage = beforeCode
             isCodeBlock = true
-            ;[receivedMessage, codeBlockText] = receivedMessage.split('```')
+            codeBlockText = rest.join('```')
+          } else {
+            isCodeBlock = true
+            codeBlockText = rest.join('```')
+            receivedMessage = ''
+            continue
           }
         }
 
@@ -440,10 +456,28 @@ export const handleSendChatFn = () => async (text: string) => {
     }
     homeStore.setState({ chatLog: messageLog })
 
+    // システムプロンプトに文字数制限を反映
+    let updatedSystemPrompt = systemPrompt;
+    if (ss.responseSettings?.enableCharacterLimit && ss.responseSettings?.characterLimit > 0) {
+      const characterLimit = ss.responseSettings.characterLimit;
+      updatedSystemPrompt = `あなたの回答は必ず${characterLimit}文字以内にしてください。これは厳密な制限です。\n\n` +
+        systemPrompt.replace('{{RESPONSE_LENGTH}}', characterLimit.toString());
+
+      // 文字数制限の強制を追加
+      updatedSystemPrompt += `\n\n重要な注意事項：
+1. 回答は必ず${characterLimit}文字以内です
+2. 前置きや挨拶は一切不要です
+3. 質問の要点のみに答えてください
+4. 箇条書きは避け、簡潔な文章で答えてください
+5. 説明が長くなりそうな場合は、最も重要な情報のみを含めてください`;
+    } else {
+      updatedSystemPrompt = systemPrompt.replace('{{RESPONSE_LENGTH}}', '制限なし');
+    }
+
     const messages: Message[] = [
       {
         role: 'system',
-        content: systemPrompt,
+        content: updatedSystemPrompt,
       },
       ...messageSelectors.getProcessedMessages(
         messageLog,

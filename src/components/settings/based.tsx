@@ -7,6 +7,7 @@ import homeStore from '@/features/stores/home'
 import menuStore from '@/features/stores/menu'
 import settingsStore from '@/features/stores/settings'
 import { TextButton } from '../textButton'
+import ChatHistory from './chatHistory'
 
 const emotionFields = [
   {
@@ -373,6 +374,32 @@ const Based = () => {
           </>
         )}
       </div>
+
+      <div className="mt-24 mb-24">
+        <div className="my-16 typography-20 font-bold">
+          {t('ResponseSettings')}
+        </div>
+        <div className="space-y-8">
+          <div>
+            <label className="block typography-16 font-bold mb-4">
+              文字数制限
+            </label>
+            <input
+              type="number"
+              min="1"
+              max="1000"
+              className="text-ellipsis px-16 py-8 w-64 bg-surface1 hover:bg-surface1-hover rounded-8"
+              value={settingsStore((s) => s.maxResponseLength) || 20}
+              onChange={(e) => {
+                const value = Math.max(1, Math.min(1000, parseInt(e.target.value) || 20));
+                settingsStore.setState({ maxResponseLength: value });
+              }}
+            />
+            <span className="ml-8 text-gray-600">文字</span>
+          </div>
+        </div>
+      </div>
+
       <div className="mt-24">
         <div className="my-16 typography-20 font-bold">
           {t('BackgroundImage')}

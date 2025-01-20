@@ -34,26 +34,83 @@ export const ChatLog = () => {
         {messages.map((msg, i) => {
           return (
             <div key={i} ref={messages.length - 1 === i ? chatScrollRef : null}>
-              {typeof msg.content === 'string' ? (
-                <Chat
-                  role={msg.role}
-                  message={msg.content}
-                  characterName={characterName}
-                />
-              ) : (
-                <>
-                  <Chat
-                    role={msg.role}
-                    message={msg.content ? msg.content[0].text : ''}
-                    characterName={characterName}
-                  />
-                  <ChatImage
-                    role={msg.role}
-                    imageUrl={msg.content ? msg.content[1].image : ''}
-                    characterName={characterName}
-                  />
-                </>
-              )}
+              {(() => {
+                if (typeof msg.content === 'string') {
+                  return (
+                    <Chat
+                      role={msg.role}
+                      message={msg.content}
+                      characterName={characterName}
+                    />
+                  );
+                }
+
+                if (msg.content && Array.isArray(msg.content)) {
+                  const textContent = msg.content.find(item => item.type === 'text')?.text || '';
+                  const imageContent = msg.content.find(item => item.type === 'image')?.image;
+
+                  return (
+                    <div className={`mx-auto max-w-[32rem] my-16 ${msg.role === 'user' ? 'pl-40' : 'pr-40'}`}>
+                      <div className={`px-24 py-8 rounded-t-8 font-bold tracking-wider ${msg.role !== 'user' ? 'bg-secondary text-white' : 'bg-base text-primary'}`}>
+                        {msg.role !== 'user' ? (
+                          <div className="flex items-center">
+                            <img src="/images/rct-japan-logo.svg" alt="RCT JAPAN" className="h-6 w-auto mr-2" />
+                            <span>{characterName || 'CHARACTER'}</span>
+                          </div>
+                        ) : 'YOU'}
+                      </div>
+                      <div className="bg-white rounded-b-8">
+                        {textContent && (
+                          <div className="px-24 py-16">
+                            <div className={`typography-16 font-bold ${msg.role !== 'user' ? 'text-secondary' : 'text-primary'}`}>
+                              {textContent.split('\n').map((line, index) => {
+                                // 箇条書きの行を検出
+                                const isList = line.trim().startsWith('・');
+                                // 空行を検出
+                                const isEmpty = line.trim() === '';
+                                
+                                return (
+                                  <div 
+                                    key={index}
+                                    className={`
+                                      ${isEmpty ? 'h-4' : ''}
+                                      ${isList ? 'pl-4' : ''}
+                                      ${index > 0 ? 'mt-2' : ''}
+                                    `}
+                                  >
+                                    {line}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                        {imageContent && (
+                          <div className="px-4 pt-4 pb-4">
+                            <div className="relative w-full h-[300px]">
+                              <Image
+                                src={imageContent}
+                                alt="Product Image"
+                                className="rounded-lg"
+                                layout="fill"
+                                objectFit="contain"
+                                unoptimized
+                                priority
+                                onError={(e: any) => {
+                                  console.error('Image load error:', e);
+                                  console.error('Failed to load image:', imageContent);
+                                }}
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
+
+                return null;
+              })()}
             </div>
           )
         })}
@@ -71,6 +128,7 @@ const Chat = ({
   message: string
   characterName: string
 }) => {
+  // アスタリスクを含まない形式に変換
   const emotionPattern = new RegExp(`\\[(${EMOTIONS.join('|')})\\]\\s*`, 'g')
   const processedMessage = message.replace(emotionPattern, '')
 
@@ -90,39 +148,38 @@ const Chat = ({
           <div
             className={`px-24 py-8 rounded-t-8 font-bold tracking-wider ${roleColor}`}
           >
-            {role !== 'user' ? characterName || 'CHARACTER' : 'YOU'}
+            {role !== 'user' ? (
+              <div className="flex items-center">
+                <img src="/images/rct-japan-logo.svg" alt="RCT JAPAN" className="h-6 w-auto mr-2" />
+                <span>{characterName || 'CHARACTER'}</span>
+              </div>
+            ) : 'YOU'}
           </div>
           <div className="px-24 py-16 bg-white rounded-b-8">
             <div className={`typography-16 font-bold ${roleText}`}>
-              {processedMessage}
+              {processedMessage.split('\n').map((line, index) => {
+                // 箇条書きの行を検出
+                const isList = line.trim().startsWith('・');
+                // 空行を検出
+                const isEmpty = line.trim() === '';
+                
+                return (
+                  <div 
+                    key={index}
+                    className={`
+                      ${isEmpty ? 'h-4' : ''}
+                      ${isList ? 'pl-4' : ''}
+                      ${index > 0 ? 'mt-2' : ''}
+                    `}
+                  >
+                    {line}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </>
       )}
-    </div>
-  )
-}
-
-const ChatImage = ({
-  role,
-  imageUrl,
-  characterName,
-}: {
-  role: string
-  imageUrl: string
-  characterName: string
-}) => {
-  const offsetX = role === 'user' ? 'pl-40' : 'pr-40'
-
-  return (
-    <div className={`mx-auto max-w-[32rem] my-16 ${offsetX}`}>
-      <Image
-        src={imageUrl}
-        alt="Generated Image"
-        className="rounded-8"
-        width={512}
-        height={512}
-      />
     </div>
   )
 }

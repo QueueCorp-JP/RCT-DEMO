@@ -6,9 +6,10 @@ import { IconButton } from '../iconButton'
 import Based from './based'
 import AI from './ai'
 import Voice from './voice'
-import YouTube from './youtube'
-import Slide from './slide'
 import Other from './other'
+import { PdfUploader } from '../pdfUploader'
+import { PDFHistory } from './pdfHistory'
+import ChatHistory from './chatHistory'
 
 type Props = {
   onClickClose: () => void
@@ -40,7 +41,7 @@ const Header = ({ onClickClose }: Pick<Props, 'onClickClose'>) => {
 }
 
 // タブの定義
-type TabKey = 'general' | 'ai' | 'youtube' | 'voice' | 'slide' | 'other'
+type TabKey = 'general' | 'ai' | 'voice' | 'other' | 'pdf' | 'chat-history'
 
 const Main = () => {
   const { t } = useTranslation()
@@ -52,6 +53,10 @@ const Main = () => {
       label: t('Settings'),
     },
     {
+      key: 'pdf',
+      label: '■ 製品資料',
+    },
+    {
       key: 'ai',
       label: t('AISettings'),
     },
@@ -60,16 +65,12 @@ const Main = () => {
       label: t('VoiceSettings'),
     },
     {
-      key: 'youtube',
-      label: t('YoutubeSettings'),
-    },
-    {
-      key: 'slide',
-      label: t('SlideSettings'),
-    },
-    {
       key: 'other',
       label: t('OtherSettings'),
+    },
+    {
+      key: 'chat-history',
+      label: `■ ${t('QuestionLog')}`,
     },
   ]
 
@@ -77,16 +78,59 @@ const Main = () => {
     switch (activeTab) {
       case 'general':
         return <Based />
+      case 'pdf':
+        return (
+          <div className="bg-white/5 p-6 rounded-2xl backdrop-blur-sm">
+            <div className="flex items-center mb-4">
+              <div className="bg-blue-500/10 p-2 rounded-xl mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h2 className="text-lg font-bold text-gray-900">製品資料の設定</h2>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="bg-white/5 rounded-xl p-4">
+                <div className="flex items-start space-x-3 mb-4">
+                  <div className="bg-blue-500/10 p-1.5 rounded-lg flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <p className="text-xs text-gray-300 leading-relaxed">
+                    製品資料（PDF）をアップロードすると、AIがその内容を参考に製品説明を行います。
+                    新しい資料をアップロードすると、以前の内容は上書きされます。
+                  </p>
+                </div>
+                <PdfUploader />
+                <PDFHistory />
+              </div>
+            </div>
+          </div>
+        )
       case 'ai':
         return <AI />
       case 'voice':
         return <Voice />
-      case 'youtube':
-        return <YouTube />
-      case 'slide':
-        return <Slide />
       case 'other':
         return <Other />
+      case 'chat-history':
+        return (
+          <div className="bg-white/5 p-6 rounded-2xl backdrop-blur-sm">
+            <div className="flex items-center mb-4">
+              <div className="bg-blue-500/10 p-2 rounded-xl mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                </svg>
+              </div>
+              <h2 className="text-xl font-bold text-gray-900 font-noto-sans-jp tracking-wider leading-relaxed">{t('QuestionLogHistory')}</h2>
+            </div>
+            <div className="bg-gray-900/80 rounded-lg">
+              <ChatHistory />
+            </div>
+          </div>
+        )
     }
   }
 
@@ -126,7 +170,6 @@ const Main = () => {
 const Footer = () => {
   return (
     <footer className="absolute py-4 bg-[#413D43] text-center text-white font-Montserrat bottom-0 w-full">
-      powered by ChatVRM from Pixiv / ver. 2.22.0
     </footer>
   )
 }

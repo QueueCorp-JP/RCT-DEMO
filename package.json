@@ -1,5 +1,5 @@
 {
-  "name": "aituber-kit",
+  "name": "rct-japan-avatar",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -38,13 +38,14 @@
     "ai": "^3.3.20",
     "axios": "^1.6.8",
     "canvas": "^2.11.2",
-    "formidable": "^3.5.1",
+    "formidable": "^3.5.2",
     "groq-sdk": "^0.3.3",
     "i18next": "^23.6.0",
     "lodash": "^4.17.21",
     "next": "^14.2.5",
     "ollama-ai-provider": "^0.13.0",
     "openai": "^4.68.4",
+    "pdf-parse": "^1.1.1",
     "pdfjs-dist": "^4.5.136",
     "pixi-live2d-display-lipsyncpatch": "^0.5.0-ls-7",
     "pixi.js": "^7.4.2",

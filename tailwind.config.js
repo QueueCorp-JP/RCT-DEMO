@@ -39,6 +39,7 @@ module.exports = {
       fontFamily: {
         M_PLUS_2: ['Montserrat', 'M_PLUS_2', 'sans-serif'],
         Montserrat: ['Montserrat', 'sans-serif'],
+        'noto-sans-jp': ['Noto Sans JP', 'sans-serif'],
       },
       screens: {
         sm: '640px',

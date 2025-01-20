@@ -112,6 +112,16 @@ interface Integrations {
   conversationContinuityMode: boolean
 }
 
+interface PDFSettings {
+  pdfContent: string
+  lastUploadedPDF: string
+  pdfHistory: Array<{
+    name: string
+    content: string
+    uploadedAt: string
+  }>
+}
+
 interface Character {
   characterName: string
   showAssistantText: boolean
@@ -119,6 +129,13 @@ interface Character {
   systemPrompt: string
   selectedVrmPath: string
   selectedLive2DPath: string
+  pdfSettings: PDFSettings
+}
+
+interface ResponseSettings {
+  enableCharacterLimit: boolean
+  characterLimit: number
+  excludeServiceDetails: boolean
 }
 
 interface General {
@@ -137,6 +154,8 @@ interface General {
   messageReceiverEnabled: boolean
   clientId: string
   useSearchGrounding: boolean
+  maxResponseLength: number
+  responseSettings: ResponseSettings
 }
 
 interface ModelType {
@@ -249,11 +268,15 @@ const settingsStore = create<SettingsState>()(
       showCharacterName:
         process.env.NEXT_PUBLIC_SHOW_CHARACTER_NAME === 'true' ? true : false,
       systemPrompt: process.env.NEXT_PUBLIC_SYSTEM_PROMPT || SYSTEM_PROMPT,
-      selectedVrmPath:
-        process.env.NEXT_PUBLIC_SELECTED_VRM_PATH || '/vrm/nikechan_v1.vrm',
+      selectedVrmPath: '/vrm/RCTAVATAR.vrm',
       selectedLive2DPath:
         process.env.NEXT_PUBLIC_SELECTED_LIVE2D_PATH ||
         '/live2d/nike01/nike01.model3.json',
+      pdfSettings: {
+        pdfContent: '',
+        lastUploadedPDF: '',
+        pdfHistory: []
+      },
 
       // General
       selectLanguage:
@@ -292,6 +315,14 @@ const settingsStore = create<SettingsState>()(
       clientId: '',
       useSearchGrounding:
         process.env.NEXT_PUBLIC_USE_SEARCH_GROUNDING === 'true',
+      maxResponseLength: 20,
+
+      // Response settings
+      responseSettings: {
+        enableCharacterLimit: false,
+        characterLimit: 100,
+        excludeServiceDetails: false
+      },
 
       // NijiVoice settings
       nijivoiceApiKey: '',
@@ -326,7 +357,7 @@ const settingsStore = create<SettingsState>()(
       relaxedMotionGroup: process.env.NEXT_PUBLIC_RELAXED_MOTION_GROUP || '',
     }),
     {
-      name: 'aitube-kit-settings',
+      name: 'rct-japan-avatar-settings',
       partialize: (state) => ({
         openaiKey: state.openaiKey,
         anthropicKey: state.anthropicKey,
@@ -396,6 +427,7 @@ const settingsStore = create<SettingsState>()(
         azureTTSEndpoint: state.azureTTSEndpoint,
         selectedVrmPath: state.selectedVrmPath,
         selectedLive2DPath: state.selectedLive2DPath,
+        pdfSettings: state.pdfSettings,
         nijivoiceApiKey: state.nijivoiceApiKey,
         nijivoiceActorId: state.nijivoiceActorId,
         nijivoiceSpeed: state.nijivoiceSpeed,
@@ -413,6 +445,8 @@ const settingsStore = create<SettingsState>()(
         sadMotionGroup: state.sadMotionGroup,
         angryMotionGroup: state.angryMotionGroup,
         relaxedMotionGroup: state.relaxedMotionGroup,
+        maxResponseLength: state.maxResponseLength,
+        responseSettings: state.responseSettings,
       }),
     }
   )
