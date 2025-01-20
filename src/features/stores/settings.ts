@@ -195,7 +195,7 @@ const settingsStore = create<SettingsState>()(
       selectAIModel: process.env.NEXT_PUBLIC_SELECT_AI_MODEL || 'gpt-4',
       localLlmUrl: process.env.NEXT_PUBLIC_LOCAL_LLM_URL || '',
       selectVoice:
-        (process.env.NEXT_PUBLIC_SELECT_VOICE as AIVoice) || 'voicevox',
+        (process.env.NEXT_PUBLIC_SELECT_VOICE as AIVoice) || 'nijivoice',
       koeiroParam: DEFAULT_PARAM,
       googleTtsType:
         process.env.NEXT_PUBLIC_GOOGLE_TTS_TYPE || 'en-US-Neural2-F',
@@ -325,7 +325,7 @@ const settingsStore = create<SettingsState>()(
       },
 
       // NijiVoice settings
-      nijivoiceApiKey: '',
+      nijivoiceApiKey: process.env.NEXT_PUBLIC_NIJIVOICE_API_KEY || '03796bbc-7e1a-4bad-89e7-7a53b3ef5903',
       nijivoiceActorId: process.env.NEXT_PUBLIC_NIJIVOICE_ACTOR_ID || '',
       nijivoiceSpeed:
         parseFloat(process.env.NEXT_PUBLIC_NIJIVOICE_SPEED || '1.0') || 1.0,

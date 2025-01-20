@@ -899,24 +899,6 @@ const Voice = () => {
             return (
               <>
                 <div>{t('NijiVoiceInfo')}</div>
-                <Link
-                  url="https://app.nijivoice.com/"
-                  label="https://app.nijivoice.com/"
-                />
-                <div className="mt-16 font-bold">{t('NijiVoiceApiKey')}</div>
-                <div className="mt-8">
-                  <input
-                    className="text-ellipsis px-16 py-8 w-col-span-4 bg-surface1 hover:bg-surface1-hover rounded-8"
-                    type="text"
-                    placeholder="..."
-                    value={nijivoiceApiKey}
-                    onChange={(e) =>
-                      settingsStore.setState({
-                        nijivoiceApiKey: e.target.value,
-                      })
-                    }
-                  />
-                </div>
                 <div className="mt-16 font-bold">{t('NijiVoiceActorId')}</div>
                 <div className="mt-8">
                   <select
