@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import i18n from 'i18next'
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 
-import { Language } from '@/features/constants/settings'
-import homeStore from '@/features/stores/home'
-import menuStore from '@/features/stores/menu'
-import settingsStore from '@/features/stores/settings'
-import { TextButton } from '../textButton'
-import ChatHistory from './chatHistory'
+import { Language } from '@/features/constants/settings';
+import homeStore from '@/features/stores/home';
+import menuStore from '@/features/stores/menu';
+import settingsStore from '@/features/stores/settings';
+import { TextButton } from '../textButton';
+import ChatHistory from './chatHistory';
 
 const emotionFields = [
   {
@@ -35,7 +35,7 @@ const emotionFields = [
     label: 'Relaxed Emotions',
     defaultValue: ['Relaxed'],
   },
-] as const
+] as const;
 
 const motionFields = [
   { key: 'idleMotionGroup', label: 'Idle Motion Group', defaultValue: 'Idle' },
@@ -60,44 +60,44 @@ const motionFields = [
     label: 'Relaxed Motion Group',
     defaultValue: 'Relaxed',
   },
-] as const
+] as const;
 
 const Live2DSettingsForm = () => {
-  const store = settingsStore()
-  const { t } = useTranslation()
+  const store = settingsStore();
+  const { t } = useTranslation();
 
   // コンポーネントマウント時にデフォルト値を設定
   useEffect(() => {
-    const updates: Record<string, any> = {}
+    const updates: Record<string, any> = {};
 
     emotionFields.forEach((field) => {
       if (!store[field.key] || store[field.key].length === 0) {
-        updates[field.key] = field.defaultValue
+        updates[field.key] = field.defaultValue;
       }
-    })
+    });
 
     motionFields.forEach((field) => {
       if (!store[field.key] || store[field.key] === '') {
-        updates[field.key] = field.defaultValue
+        updates[field.key] = field.defaultValue;
       }
-    })
+    });
 
     if (Object.keys(updates).length > 0) {
-      settingsStore.setState(updates)
+      settingsStore.setState(updates);
     }
-  }, [])
+  }, []);
 
   const handleChange = (key: string, value: string) => {
     // 最後のカンマを許容しつつ、空の要素を除外
     const cleanedArray = value
       .split(',')
       .map((item) => item.trim())
-      .filter(Boolean)
+      .filter(Boolean);
 
     settingsStore.setState({
       [key]: cleanedArray,
-    })
-  }
+    });
+  };
 
   return (
     <>
@@ -151,59 +151,59 @@ const Live2DSettingsForm = () => {
         ))}
       </div>
     </>
-  )
-}
+  );
+};
 
 const Based = () => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
   const { characterName, selectedVrmPath, selectedLive2DPath, modelType } =
-    settingsStore()
-  const [vrmFiles, setVrmFiles] = useState<string[]>([])
+    settingsStore();
+  const [vrmFiles, setVrmFiles] = useState<string[]>([]);
   const [live2dModels, setLive2dModels] = useState<
     Array<{ path: string; name: string }>
-  >([])
-  const selectLanguage = settingsStore((s) => s.selectLanguage)
+  >([]);
+  const selectLanguage = settingsStore((s) => s.selectLanguage);
 
   useEffect(() => {
     fetch('/api/get-vrm-list')
       .then((res) => res.json())
       .then((files) => setVrmFiles(files))
       .catch((error) => {
-        console.error('Error fetching VRM list:', error)
-      })
+        console.error('Error fetching VRM list:', error);
+      });
 
     fetch('/api/get-live2d-list')
       .then((res) => res.json())
       .then((models) => setLive2dModels(models))
       .catch((error) => {
-        console.error('Error fetching Live2D list:', error)
-      })
-  }, [])
+        console.error('Error fetching Live2D list:', error);
+      });
+  }, []);
 
   const handleVrmUpload = async (file: File) => {
-    const formData = new FormData()
-    formData.append('file', file)
+    const formData = new FormData();
+    formData.append('file', file);
 
     const response = await fetch('/api/upload-vrm-list', {
       method: 'POST',
       body: formData,
-    })
+    });
 
     if (response.ok) {
-      const { path } = await response.json()
-      settingsStore.setState({ selectedVrmPath: path })
-      const { viewer } = homeStore.getState()
-      viewer.loadVrm(path)
+      const { path } = await response.json();
+      settingsStore.setState({ selectedVrmPath: path });
+      const { viewer } = homeStore.getState();
+      viewer.loadVrm(path);
 
       // リストを更新
       fetch('/api/get-vrm-list')
         .then((res) => res.json())
         .then((files) => setVrmFiles(files))
         .catch((error) => {
-          console.error('Error fetching VRM list:', error)
-        })
+          console.error('Error fetching VRM list:', error);
+        });
     }
-  }
+  };
 
   return (
     <>
@@ -214,50 +214,50 @@ const Based = () => {
             className="px-16 py-8 bg-surface1 hover:bg-surface1-hover rounded-8"
             value={selectLanguage}
             onChange={(e) => {
-              const newLanguage = e.target.value as Language
+              const newLanguage = e.target.value as Language;
 
-              const ss = settingsStore.getState()
+              const ss = settingsStore.getState();
               const jaVoiceSelected =
                 ss.selectVoice === 'voicevox' ||
                 ss.selectVoice === 'koeiromap' ||
                 ss.selectVoice === 'aivis_speech' ||
-                ss.selectVoice === 'nijivoice'
+                ss.selectVoice === 'nijivoice';
 
               switch (newLanguage) {
                 case 'ja':
-                  settingsStore.setState({ selectLanguage: 'ja' })
+                  settingsStore.setState({ selectLanguage: 'ja' });
 
-                  i18n.changeLanguage('ja')
-                  break
+                  i18n.changeLanguage('ja');
+                  break;
                 case 'en':
-                  settingsStore.setState({ selectLanguage: 'en' })
+                  settingsStore.setState({ selectLanguage: 'en' });
 
                   if (jaVoiceSelected) {
-                    settingsStore.setState({ selectVoice: 'google' })
+                    settingsStore.setState({ selectVoice: 'google' });
                   }
 
-                  i18n.changeLanguage('en')
-                  break
+                  i18n.changeLanguage('en');
+                  break;
                 case 'zh':
-                  settingsStore.setState({ selectLanguage: 'zh' })
+                  settingsStore.setState({ selectLanguage: 'zh' });
 
                   if (jaVoiceSelected) {
-                    settingsStore.setState({ selectVoice: 'google' })
+                    settingsStore.setState({ selectVoice: 'google' });
                   }
 
-                  i18n.changeLanguage('zh-TW')
-                  break
+                  i18n.changeLanguage('zh-TW');
+                  break;
                 case 'ko':
-                  settingsStore.setState({ selectLanguage: 'ko' })
+                  settingsStore.setState({ selectLanguage: 'ko' });
 
                   if (jaVoiceSelected) {
-                    settingsStore.setState({ selectVoice: 'google' })
+                    settingsStore.setState({ selectVoice: 'google' });
                   }
 
-                  i18n.changeLanguage('ko')
-                  break
+                  i18n.changeLanguage('ko');
+                  break;
                 default:
-                  break
+                  break;
               }
             }}
           >
@@ -316,10 +316,10 @@ const Based = () => {
               className="text-ellipsis px-16 py-8 w-col-span-2 bg-surface1 hover:bg-surface1-hover rounded-8"
               value={selectedVrmPath}
               onChange={(e) => {
-                const path = e.target.value
-                settingsStore.setState({ selectedVrmPath: path })
-                const { viewer } = homeStore.getState()
-                viewer.loadVrm(path)
+                const path = e.target.value;
+                settingsStore.setState({ selectedVrmPath: path });
+                const { viewer } = homeStore.getState();
+                viewer.loadVrm(path);
               }}
             >
               {vrmFiles.map((file) => (
@@ -332,16 +332,16 @@ const Based = () => {
             <div className="my-16">
               <TextButton
                 onClick={() => {
-                  const { fileInput } = menuStore.getState()
+                  const { fileInput } = menuStore.getState();
                   if (fileInput) {
-                    fileInput.accept = '.vrm'
+                    fileInput.accept = '.vrm';
                     fileInput.onchange = (e) => {
-                      const file = (e.target as HTMLInputElement).files?.[0]
+                      const file = (e.target as HTMLInputElement).files?.[0];
                       if (file) {
-                        handleVrmUpload(file)
+                        handleVrmUpload(file);
                       }
-                    }
-                    fileInput.click()
+                    };
+                    fileInput.click();
                   }
                 }}
               >
@@ -358,8 +358,8 @@ const Based = () => {
               className="text-ellipsis px-16 py-8 w-col-span-2 bg-surface1 hover:bg-surface1-hover rounded-8 mb-8"
               value={selectedLive2DPath}
               onChange={(e) => {
-                const path = e.target.value
-                settingsStore.setState({ selectedLive2DPath: path })
+                const path = e.target.value;
+                settingsStore.setState({ selectedLive2DPath: path });
               }}
             >
               {live2dModels.map((model) => (
@@ -391,7 +391,10 @@ const Based = () => {
               className="text-ellipsis px-16 py-8 w-64 bg-surface1 hover:bg-surface1-hover rounded-8"
               value={settingsStore((s) => s.maxResponseLength) || 20}
               onChange={(e) => {
-                const value = Math.max(1, Math.min(1000, parseInt(e.target.value) || 20));
+                const value = Math.max(
+                  1,
+                  Math.min(1000, parseInt(e.target.value) || 20)
+                );
                 settingsStore.setState({ maxResponseLength: value });
               }}
             />
@@ -407,8 +410,8 @@ const Based = () => {
         <div className="my-8">
           <TextButton
             onClick={() => {
-              const { bgFileInput } = menuStore.getState()
-              bgFileInput?.click()
+              const { bgFileInput } = menuStore.getState();
+              bgFileInput?.click();
             }}
           >
             {t('ChangeBackgroundImage')}
@@ -416,6 +419,6 @@ const Based = () => {
         </div>
       </div>
     </>
-  )
-}
-export default Based
+  );
+};
+export default Based;

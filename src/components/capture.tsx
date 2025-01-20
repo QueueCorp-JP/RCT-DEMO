@@ -1,60 +1,60 @@
-import { useRef, useState, useEffect, useCallback } from 'react'
-import homeStore from '@/features/stores/home'
-import { IconButton } from './iconButton'
+import { useRef, useState, useEffect, useCallback } from 'react';
+import homeStore from '@/features/stores/home';
+import { IconButton } from './iconButton';
 
 const Capture = () => {
-  const triggerShutter = homeStore((s) => s.triggerShutter)
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const mediaStreamRef = useRef<MediaStream | null>(null)
-  const captureStartedRef = useRef<boolean>(false)
+  const triggerShutter = homeStore((s) => s.triggerShutter);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const captureStartedRef = useRef<boolean>(false);
 
-  const [permissionGranted, setPermissionGranted] = useState<boolean>(false)
-  const [showPermissionModal, setShowPermissionModal] = useState<boolean>(true)
+  const [permissionGranted, setPermissionGranted] = useState<boolean>(false);
+  const [showPermissionModal, setShowPermissionModal] = useState<boolean>(true);
 
   // 初回のみ許可を要求するために useRef で状態を保持
-  const requestCapturePermissionAttempted = useRef<boolean>(false)
+  const requestCapturePermissionAttempted = useRef<boolean>(false);
 
   // Capture permission request
   const requestCapturePermission = async () => {
     try {
       if (!navigator.mediaDevices) {
-        throw new Error('Media Devices API non supported.')
+        throw new Error('Media Devices API non supported.');
       }
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
-      })
-      mediaStreamRef.current = stream
-      console.log('MediaStream obtained:', mediaStreamRef.current)
+      });
+      mediaStreamRef.current = stream;
+      console.log('MediaStream obtained:', mediaStreamRef.current);
       if (videoRef.current) {
-        videoRef.current.srcObject = stream
-        await videoRef.current.play()
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
       }
-      setPermissionGranted(true)
+      setPermissionGranted(true);
       // menuStore.setState({ capturePermissionGranted: true })
-      setShowPermissionModal(false)
+      setShowPermissionModal(false);
     } catch (error) {
-      console.error('Error capturing display:', error)
-      setShowPermissionModal(true)
+      console.error('Error capturing display:', error);
+      setShowPermissionModal(true);
     }
-  }
+  };
 
   useEffect(() => {
     // 初回のみ許可を要求
     if (!requestCapturePermissionAttempted.current && !permissionGranted) {
-      requestCapturePermission()
-      requestCapturePermissionAttempted.current = true
+      requestCapturePermission();
+      requestCapturePermissionAttempted.current = true;
     }
-  }, [permissionGranted])
+  }, [permissionGranted]);
 
   const startCapture = async () => {
     // すでに画面共有中の場合は停止
     if (captureStartedRef.current && mediaStreamRef.current) {
-      const tracks = mediaStreamRef.current.getTracks()
-      tracks.forEach((track) => track.stop())
-      mediaStreamRef.current = null
-      captureStartedRef.current = false
+      const tracks = mediaStreamRef.current.getTracks();
+      tracks.forEach((track) => track.stop());
+      mediaStreamRef.current = null;
+      captureStartedRef.current = false;
       if (videoRef.current) {
-        videoRef.current.srcObject = null
+        videoRef.current.srcObject = null;
       }
     }
 
@@ -62,66 +62,66 @@ const Capture = () => {
     try {
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
-      })
-      mediaStreamRef.current = stream
+      });
+      mediaStreamRef.current = stream;
 
       if (videoRef.current) {
-        videoRef.current.srcObject = stream
-        await videoRef.current.play()
-        captureStartedRef.current = true
+        videoRef.current.srcObject = stream;
+        await videoRef.current.play();
+        captureStartedRef.current = true;
       }
     } catch (error) {
-      console.error('Error capturing display:', error)
+      console.error('Error capturing display:', error);
     }
-  }
+  };
 
   const handleCapture = useCallback(() => {
     if (videoRef.current && mediaStreamRef.current) {
-      const canvas = document.createElement('canvas')
-      const context = canvas.getContext('2d')
-      const { videoWidth, videoHeight } = videoRef.current
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      const { videoWidth, videoHeight } = videoRef.current;
 
-      canvas.width = videoWidth
-      canvas.height = videoHeight
-      context?.drawImage(videoRef.current, 0, 0)
+      canvas.width = videoWidth;
+      canvas.height = videoHeight;
+      context?.drawImage(videoRef.current, 0, 0);
 
-      const dataUrl = canvas.toDataURL('image/png')
+      const dataUrl = canvas.toDataURL('image/png');
 
       if (dataUrl !== '') {
-        console.log('capture')
+        console.log('capture');
         homeStore.setState({
           modalImage: dataUrl,
           triggerShutter: false, // シャッターをリセット
-        })
+        });
       } else {
-        homeStore.setState({ modalImage: '' })
+        homeStore.setState({ modalImage: '' });
       }
     } else {
-      console.error('Video or media stream is not available')
+      console.error('Video or media stream is not available');
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
     if (triggerShutter) {
-      handleCapture()
+      handleCapture();
     }
-  }, [triggerShutter, handleCapture])
+  }, [triggerShutter, handleCapture]);
 
   useEffect(() => {
-    const videoElement = videoRef.current
+    const videoElement = videoRef.current;
 
     return () => {
       if (mediaStreamRef.current) {
-        const tracks = mediaStreamRef.current.getTracks()
-        tracks.forEach((track) => track.stop())
-        mediaStreamRef.current = null
+        const tracks = mediaStreamRef.current.getTracks();
+        tracks.forEach((track) => track.stop());
+        mediaStreamRef.current = null;
       }
-      captureStartedRef.current = false
+      captureStartedRef.current = false;
       if (videoElement) {
-        videoElement.srcObject = null
+        videoElement.srcObject = null;
       }
-    }
-  }, [])
+    };
+  }, []);
 
   return (
     <div className="absolute row-span-1 flex right-0 max-h-[40vh] z-10">
@@ -146,7 +146,7 @@ const Capture = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Capture
+export default Capture;

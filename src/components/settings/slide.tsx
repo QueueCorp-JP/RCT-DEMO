@@ -1,26 +1,26 @@
-import { useTranslation } from 'react-i18next'
-import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next';
+import { useEffect, useState } from 'react';
 import settingsStore, {
   multiModalAIServices,
   multiModalAIServiceKey,
-} from '@/features/stores/settings'
-import menuStore from '@/features/stores/menu'
-import slideStore from '@/features/stores/slide'
-import { TextButton } from '../textButton'
-import SlideConvert from './slideConvert'
+} from '@/features/stores/settings';
+import menuStore from '@/features/stores/menu';
+import slideStore from '@/features/stores/slide';
+import { TextButton } from '../textButton';
+import SlideConvert from './slideConvert';
 
 const Slide = () => {
-  const { t } = useTranslation()
-  const selectAIService = settingsStore((s) => s.selectAIService)
+  const { t } = useTranslation();
+  const selectAIService = settingsStore((s) => s.selectAIService);
 
-  const slideMode = settingsStore((s) => s.slideMode)
+  const slideMode = settingsStore((s) => s.slideMode);
   const conversationContinuityMode = settingsStore(
     (s) => s.conversationContinuityMode
-  )
+  );
 
-  const selectedSlideDocs = slideStore((s) => s.selectedSlideDocs)
-  const [slideFolders, setSlideFolders] = useState<string[]>([])
-  const [updateKey, setUpdateKey] = useState(0)
+  const selectedSlideDocs = slideStore((s) => s.selectedSlideDocs);
+  const [slideFolders, setSlideFolders] = useState<string[]>([]);
+  const [updateKey, setUpdateKey] = useState(0);
 
   useEffect(() => {
     if (slideMode) {
@@ -28,40 +28,42 @@ const Slide = () => {
       fetch('/api/getSlideFolders')
         .then((response) => response.json())
         .then((data) => setSlideFolders(data))
-        .catch((error) => console.error('Error fetching slide folders:', error))
+        .catch((error) =>
+          console.error('Error fetching slide folders:', error)
+        );
     }
-  }, [slideMode, updateKey])
+  }, [slideMode, updateKey]);
 
   useEffect(() => {
     // 初期値を 'demo' に設定
     if (!selectedSlideDocs) {
-      slideStore.setState({ selectedSlideDocs: 'demo' })
+      slideStore.setState({ selectedSlideDocs: 'demo' });
     }
-  }, [selectedSlideDocs])
+  }, [selectedSlideDocs]);
 
   const handleFolderUpdate = () => {
-    setUpdateKey((prevKey) => prevKey + 1) // 更新トリガー
-  }
+    setUpdateKey((prevKey) => prevKey + 1); // 更新トリガー
+  };
 
   const toggleSlideMode = () => {
-    const newSlideMode = !slideMode
+    const newSlideMode = !slideMode;
     settingsStore.setState({
       slideMode: newSlideMode,
       // スライドモードがオンになったら、会話継続モードをオフにする
       conversationContinuityMode: newSlideMode
         ? false
         : conversationContinuityMode,
-    })
+    });
     if (!newSlideMode) {
-      menuStore.setState({ slideVisible: false })
+      menuStore.setState({ slideVisible: false });
     }
-  }
+  };
 
   const handleFolderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    slideStore.setState({ selectedSlideDocs: e.target.value })
-    slideStore.setState({ isPlaying: false })
-    slideStore.setState({ currentSlide: 0 })
-  }
+    slideStore.setState({ selectedSlideDocs: e.target.value });
+    slideStore.setState({ isPlaying: false });
+    slideStore.setState({ currentSlide: 0 });
+  };
 
   return (
     <>
@@ -103,7 +105,7 @@ const Slide = () => {
         </>
       )}
     </>
-  )
-}
+  );
+};
 
-export default Slide
+export default Slide;

@@ -30,7 +30,14 @@ export default async function handler(
 ) {
   if (req.method === 'POST') {
     try {
-      const { question, answer, type = 'normal', category, status, priority } = req.body;
+      const {
+        question,
+        answer,
+        type = 'normal',
+        category,
+        status,
+        priority,
+      } = req.body;
       const newLog: ChatLog = {
         question,
         answer,
@@ -39,8 +46,8 @@ export default async function handler(
         ...(type === 'improvement' && {
           category: category || 'other',
           status: status || 'pending',
-          priority: priority || 'medium'
-        })
+          priority: priority || 'medium',
+        }),
       };
 
       const currentLogs = JSON.parse(fs.readFileSync(HISTORY_FILE, 'utf-8'));

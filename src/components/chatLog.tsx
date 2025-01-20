@@ -1,25 +1,27 @@
-import { useEffect, useRef } from 'react'
-import { Message } from '@/features/messages/messages'
-import Image from 'next/image'
+import { useEffect, useRef } from 'react';
+import { Message } from '@/features/messages/messages';
+import Image from 'next/image';
 
 interface Props {
-  messages: Message[]
-  characterName?: string
+  messages: Message[];
+  characterName?: string;
 }
 
 interface ChatProps {
-  role: string
-  message: string
-  characterName?: string
+  role: string;
+  message: string;
+  characterName?: string;
 }
 
-type MessageItem = {
-  type: 'text'
-  text: string
-} | {
-  type: 'image'
-  image: string
-}
+type MessageItem =
+  | {
+      type: 'text';
+      text: string;
+    }
+  | {
+      type: 'image';
+      image: string;
+    };
 
 const Chat = ({ role, message, characterName }: ChatProps) => {
   return (
@@ -30,9 +32,7 @@ const Chat = ({ role, message, characterName }: ChatProps) => {
     >
       <div
         className={`px-24 py-8 rounded-t-8 font-bold tracking-wider ${
-          role !== 'user'
-            ? 'bg-secondary text-white'
-            : 'bg-base text-primary'
+          role !== 'user' ? 'bg-secondary text-white' : 'bg-base text-primary'
         }`}
       >
         {role !== 'user' ? (
@@ -58,8 +58,8 @@ const Chat = ({ role, message, characterName }: ChatProps) => {
             }`}
           >
             {message.split('\n').map((line: string, index: number) => {
-              const isList = line.trim().startsWith('・')
-              const isEmpty = line.trim() === ''
+              const isList = line.trim().startsWith('・');
+              const isEmpty = line.trim() === '';
 
               return (
                 <div
@@ -70,23 +70,23 @@ const Chat = ({ role, message, characterName }: ChatProps) => {
                 >
                   {line}
                 </div>
-              )
+              );
             })}
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 const ChatLog = ({ messages, characterName }: Props) => {
-  const chatScrollRef = useRef<HTMLDivElement>(null)
+  const chatScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (chatScrollRef.current) {
-      chatScrollRef.current.scrollIntoView({ behavior: 'smooth' })
+      chatScrollRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages])
+  }, [messages]);
 
   return (
     <div className="absolute w-col-span-7 max-w-full h-[100svh] pb-64 z-10">
@@ -102,20 +102,21 @@ const ChatLog = ({ messages, characterName }: Props) => {
                       message={msg.content}
                       characterName={characterName}
                     />
-                  )
+                  );
                 }
 
                 if (msg.content && Array.isArray(msg.content)) {
-                  const content = msg.content as MessageItem[]
-                  const textContent = content.find(
-                    (item): item is { type: 'text'; text: string } =>
-                      item.type === 'text'
-                  )?.text || ''
+                  const content = msg.content as MessageItem[];
+                  const textContent =
+                    content.find(
+                      (item): item is { type: 'text'; text: string } =>
+                        item.type === 'text'
+                    )?.text || '';
 
                   const imageContent = content.find(
                     (item): item is { type: 'image'; image: string } =>
                       item.type === 'image'
-                  )?.image
+                  )?.image;
 
                   return (
                     <div
@@ -155,21 +156,23 @@ const ChatLog = ({ messages, characterName }: Props) => {
                                   : 'text-primary'
                               }`}
                             >
-                              {textContent.split('\n').map((line: string, index: number) => {
-                                const isList = line.trim().startsWith('・')
-                                const isEmpty = line.trim() === ''
+                              {textContent
+                                .split('\n')
+                                .map((line: string, index: number) => {
+                                  const isList = line.trim().startsWith('・');
+                                  const isEmpty = line.trim() === '';
 
-                                return (
-                                  <div
-                                    key={index}
-                                    className={`${isList ? 'ml-16' : ''} ${
-                                      isEmpty ? 'h-16' : ''
-                                    }`}
-                                  >
-                                    {line}
-                                  </div>
-                                )
-                              })}
+                                  return (
+                                    <div
+                                      key={index}
+                                      className={`${isList ? 'ml-16' : ''} ${
+                                        isEmpty ? 'h-16' : ''
+                                      }`}
+                                    >
+                                      {line}
+                                    </div>
+                                  );
+                                })}
                             </div>
                           </div>
                         )}
@@ -186,15 +189,15 @@ const ChatLog = ({ messages, characterName }: Props) => {
                         )}
                       </div>
                     </div>
-                  )
+                  );
                 }
               })()}
             </div>
-          )
+          );
         })}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ChatLog
+export default ChatLog;

@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react'
-import { IconButton } from './iconButton'
-import { useTranslation } from 'react-i18next'
+import React, { useEffect } from 'react';
+import { IconButton } from './iconButton';
+import { useTranslation } from 'react-i18next';
 
 type ToastProps = {
-  message: string
-  type: 'success' | 'error' | 'info'
-  onClose: () => void
-  duration?: number
-  closing?: boolean
-}
+  message: string;
+  type: 'success' | 'error' | 'info';
+  onClose: () => void;
+  duration?: number;
+  closing?: boolean;
+};
 
 export const Toast = ({
   message,
@@ -17,37 +17,37 @@ export const Toast = ({
   duration = 5000,
   closing = false,
 }: ToastProps) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      onClose()
-    }, duration)
+      onClose();
+    }, duration);
 
-    return () => clearTimeout(timer)
-  }, [onClose, duration])
+    return () => clearTimeout(timer);
+  }, [onClose, duration]);
 
   const getIconColor = () => {
     switch (type) {
       case 'success':
-        return 'text-toast-success'
+        return 'text-toast-success';
       case 'error':
-        return 'text-toast-error'
+        return 'text-toast-error';
       default:
-        return 'text-toast-info'
+        return 'text-toast-info';
     }
-  }
+  };
 
   const getIconName = () => {
     switch (type) {
       case 'success':
-        return '24/Check'
+        return '24/Check';
       case 'error':
-        return '24/Error'
+        return '24/Error';
       default:
-        return '24/CommentOutline'
+        return '24/CommentOutline';
     }
-  }
+  };
 
   return (
     <div
@@ -73,5 +73,5 @@ export const Toast = ({
         className="!p-2 !bg-transparent !hover:bg-black/10"
       />
     </div>
-  )
-}
+  );
+};

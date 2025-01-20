@@ -52,7 +52,7 @@ export const PDFHistory = () => {
         day: 'numeric',
         hour: '2-digit',
         minute: '2-digit',
-        hour12: false
+        hour12: false,
       }).format(date);
     } catch (error) {
       console.error('Date formatting error:', error);
@@ -66,12 +66,15 @@ export const PDFHistory = () => {
     }
 
     try {
-      const response = await fetch(`/api/pdf-history?fileName=${encodeURIComponent(file.name)}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `/api/pdf-history?fileName=${encodeURIComponent(file.name)}`,
+        {
+          method: 'DELETE',
+        }
+      );
 
       if (response.ok) {
-        setPdfFiles(pdfFiles.filter(f => f.name !== file.name));
+        setPdfFiles(pdfFiles.filter((f) => f.name !== file.name));
       } else {
         throw new Error('Failed to delete PDF');
       }
@@ -88,9 +91,12 @@ export const PDFHistory = () => {
 
     try {
       for (const file of pdfFiles) {
-        await fetch(`/api/pdf-history?fileName=${encodeURIComponent(file.name)}`, {
-          method: 'DELETE',
-        });
+        await fetch(
+          `/api/pdf-history?fileName=${encodeURIComponent(file.name)}`,
+          {
+            method: 'DELETE',
+          }
+        );
       }
       setPdfFiles([]);
     } catch (error) {
@@ -106,12 +112,15 @@ export const PDFHistory = () => {
 
       if (isActive) {
         newPrompt = newPrompt.replace(content + '\n', '');
-        setActiveFileIndexes(activeFileIndexes.filter(i => i !== index));
+        setActiveFileIndexes(activeFileIndexes.filter((i) => i !== index));
       } else {
         if (!systemPrompt.includes('{{PDF_CONTENT}}')) {
           newPrompt = systemPrompt + '\n\n参考資料：\n{{PDF_CONTENT}}';
         }
-        newPrompt = newPrompt.replace('{{PDF_CONTENT}}', content + '\n{{PDF_CONTENT}}');
+        newPrompt = newPrompt.replace(
+          '{{PDF_CONTENT}}',
+          content + '\n{{PDF_CONTENT}}'
+        );
         setActiveFileIndexes([...activeFileIndexes, index]);
       }
 
@@ -139,13 +148,26 @@ export const PDFHistory = () => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <div className="bg-blue-50 p-2 rounded-lg">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-blue-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
             </svg>
           </div>
           <div>
             <div className="flex items-center gap-4">
-              <h3 className="text-lg font-bold text-gray-900 tracking-tight">最近のPDF</h3>
+              <h3 className="text-lg font-bold text-gray-900 tracking-tight">
+                最近のPDF
+              </h3>
               <button
                 onClick={handleDeleteAllPDFs}
                 className="px-3 py-1 text-xs font-semibold text-red-600 hover:text-red-700 rounded-lg hover:bg-red-50 border border-red-200 hover:border-red-300 transition-all duration-200"
@@ -154,13 +176,14 @@ export const PDFHistory = () => {
               </button>
             </div>
             <p className="text-sm font-medium text-gray-600 mt-0.5">
-              {activeFileIndexes.length > 0 && `${activeFileIndexes.length}件適用中 / `}
+              {activeFileIndexes.length > 0 &&
+                `${activeFileIndexes.length}件適用中 / `}
               {pdfFiles.length}件
             </p>
           </div>
         </div>
       </div>
-      
+
       <div className="max-h-[240px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 pr-1">
         <div className="space-y-2.5">
           {pdfFiles.map((file, index) => (
@@ -171,12 +194,27 @@ export const PDFHistory = () => {
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center min-w-0">
-                  <div className={`p-2.5 rounded-xl mr-3.5 flex-shrink-0 border transition-all duration-200
-                    ${activeFileIndexes.includes(index)
-                      ? 'bg-blue-50 border-blue-200 shadow-sm'
-                      : 'bg-gray-50 border-gray-200 group-hover:border-blue-200 group-hover:shadow-sm'}`}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  <div
+                    className={`p-2.5 rounded-xl mr-3.5 flex-shrink-0 border transition-all duration-200
+                    ${
+                      activeFileIndexes.includes(index)
+                        ? 'bg-blue-50 border-blue-200 shadow-sm'
+                        : 'bg-gray-50 border-gray-200 group-hover:border-blue-200 group-hover:shadow-sm'
+                    }`}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5 text-blue-600"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
                     </svg>
                   </div>
                   <div className="min-w-0 flex-1">
@@ -198,9 +236,11 @@ export const PDFHistory = () => {
                   <button
                     onClick={() => handleTogglePDF(index, file.content)}
                     className={`px-4 py-1.5 text-sm font-semibold rounded-lg transition-all duration-200 flex-shrink-0
-                      ${activeFileIndexes.includes(index)
-                        ? 'bg-gray-700 text-gray-50 hover:bg-gray-600 shadow-sm ring-1 ring-gray-900/10 font-bold'
-                        : 'text-gray-900 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300'}`}
+                      ${
+                        activeFileIndexes.includes(index)
+                          ? 'bg-gray-700 text-gray-50 hover:bg-gray-600 shadow-sm ring-1 ring-gray-900/10 font-bold'
+                          : 'text-gray-900 bg-gray-50 hover:bg-gray-100 border border-gray-200 hover:border-gray-300'
+                      }`}
                   >
                     {activeFileIndexes.includes(index) ? '解除' : '適用'}
                   </button>

@@ -1,92 +1,92 @@
-import React, { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import settingsStore, {
   multiModalAIServiceKey,
   multiModalAIServices,
-} from '@/features/stores/settings'
-import { TextButton } from '../textButton'
+} from '@/features/stores/settings';
+import { TextButton } from '../textButton';
 
 interface SlideConvertProps {
-  onFolderUpdate: () => void // フォルダ更新のための関数
+  onFolderUpdate: () => void; // フォルダ更新のための関数
 }
 
 const SlideConvert: React.FC<SlideConvertProps> = ({ onFolderUpdate }) => {
-  const { t } = useTranslation()
-  const [file, setFile] = useState<File | null>(null)
-  const [folderName, setFolderName] = useState<string>('')
+  const { t } = useTranslation();
+  const [file, setFile] = useState<File | null>(null);
+  const [folderName, setFolderName] = useState<string>('');
   const aiService = settingsStore.getState()
-    .selectAIService as multiModalAIServiceKey
+    .selectAIService as multiModalAIServiceKey;
 
-  const [model, setModel] = useState<string>('')
+  const [model, setModel] = useState<string>('');
 
   useEffect(() => {
     switch (aiService) {
       case 'openai':
-        setModel('gpt-4o')
-        break
+        setModel('gpt-4o');
+        break;
       case 'anthropic':
-        setModel('claude-3-5-sonnet-20241022')
-        break
+        setModel('claude-3-5-sonnet-20241022');
+        break;
       case 'google':
-        setModel('gemini-1.5-flash-latest')
-        break
+        setModel('gemini-1.5-flash-latest');
+        break;
       default:
-        setModel('')
+        setModel('');
     }
-  }, [aiService])
+  }, [aiService]);
 
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const selectLanguage = settingsStore.getState().selectLanguage
-  const [selectedFileName, setSelectedFileName] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const selectLanguage = settingsStore.getState().selectLanguage;
+  const [selectedFileName, setSelectedFileName] = useState<string>('');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.[0]) {
-      const selectedFile = event.target.files[0]
-      setFile(selectedFile)
-      setSelectedFileName(selectedFile.name)
+      const selectedFile = event.target.files[0];
+      setFile(selectedFile);
+      setSelectedFileName(selectedFile.name);
     }
-  }
+  };
 
   const handleFormSubmit = async (event: React.FormEvent) => {
-    event.preventDefault()
+    event.preventDefault();
 
     if (!multiModalAIServices.includes(aiService)) {
-      alert(t('InvalidAIService'))
-      return
+      alert(t('InvalidAIService'));
+      return;
     }
 
-    const apiKeyName = `${aiService}Key` as const
-    const apiKey = settingsStore.getState()[apiKeyName]
+    const apiKeyName = `${aiService}Key` as const;
+    const apiKey = settingsStore.getState()[apiKeyName];
 
     if (!file || !folderName || !apiKey || !model) {
-      alert(t('PdfConvertSubmitError'))
-      return
+      alert(t('PdfConvertSubmitError'));
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('folderName', folderName)
-    formData.append('aiService', aiService)
-    formData.append('apiKey', apiKey)
-    formData.append('model', model)
-    formData.append('selectLanguage', selectLanguage)
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folderName', folderName);
+    formData.append('aiService', aiService);
+    formData.append('apiKey', apiKey);
+    formData.append('model', model);
+    formData.append('selectLanguage', selectLanguage);
 
     const response = await fetch('/api/convertSlide', {
       method: 'POST',
       body: formData,
-    })
-    setIsLoading(false)
+    });
+    setIsLoading(false);
 
     // フォルダ更新関数を呼び出す
     if (response.ok) {
-      onFolderUpdate()
-      alert(t('PdfConvertSuccess'))
+      onFolderUpdate();
+      alert(t('PdfConvertSuccess'));
     } else {
-      alert(t('PdfConvertError'))
+      alert(t('PdfConvertError'));
     }
-  }
+  };
 
   return (
     <div className="mt-24">
@@ -105,8 +105,8 @@ const SlideConvert: React.FC<SlideConvertProps> = ({ onFolderUpdate }) => {
           />
           <TextButton
             onClick={(e) => {
-              e.preventDefault()
-              document.getElementById('fileInput')?.click()
+              e.preventDefault();
+              document.getElementById('fileInput')?.click();
             }}
             type="button"
           >
@@ -183,7 +183,7 @@ const SlideConvert: React.FC<SlideConvertProps> = ({ onFolderUpdate }) => {
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default SlideConvert
+export default SlideConvert;

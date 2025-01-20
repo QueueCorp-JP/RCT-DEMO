@@ -1,8 +1,8 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-import { KoeiroParam, DEFAULT_PARAM } from '@/features/constants/koeiroParam'
-import { SYSTEM_PROMPT } from '@/features/constants/systemPromptConstants'
+import { KoeiroParam, DEFAULT_PARAM } from '@/features/constants/koeiroParam';
+import { SYSTEM_PROMPT } from '@/features/constants/systemPromptConstants';
 import {
   AIService,
   AIVoice,
@@ -13,153 +13,153 @@ import {
   RealtimeAPIModeVoice,
   RealtimeAPIModeAzureVoice,
   AudioModeInputType,
-} from '../constants/settings'
+} from '../constants/settings';
 
 export const multiModalAIServices = [
   'openai',
   'anthropic',
   'google',
   'azure',
-] as const
-export type multiModalAIServiceKey = (typeof multiModalAIServices)[number]
+] as const;
+export type multiModalAIServiceKey = (typeof multiModalAIServices)[number];
 
 type multiModalAPIKeys = {
-  [K in multiModalAIServiceKey as `${K}Key`]: string
-}
+  [K in multiModalAIServiceKey as `${K}Key`]: string;
+};
 
 interface APIKeys {
-  openaiKey: string
-  anthropicKey: string
-  googleKey: string
-  azureKey: string
-  groqKey: string
-  difyKey: string
-  cohereKey: string
-  mistralaiKey: string
-  perplexityKey: string
-  fireworksKey: string
-  koeiromapKey: string
-  youtubeApiKey: string
-  elevenlabsApiKey: string
-  azureEndpoint: string
-  openaiTTSKey: string
-  azureTTSKey: string
-  azureTTSEndpoint: string
+  openaiKey: string;
+  anthropicKey: string;
+  googleKey: string;
+  azureKey: string;
+  groqKey: string;
+  difyKey: string;
+  cohereKey: string;
+  mistralaiKey: string;
+  perplexityKey: string;
+  fireworksKey: string;
+  koeiromapKey: string;
+  youtubeApiKey: string;
+  elevenlabsApiKey: string;
+  azureEndpoint: string;
+  openaiTTSKey: string;
+  azureTTSKey: string;
+  azureTTSEndpoint: string;
 }
 
 interface Live2DSettings {
-  neutralEmotions: string[]
-  happyEmotions: string[]
-  sadEmotions: string[]
-  angryEmotions: string[]
-  relaxedEmotions: string[]
-  idleMotionGroup: string
-  neutralMotionGroup: string
-  happyMotionGroup: string
-  sadMotionGroup: string
-  angryMotionGroup: string
-  relaxedMotionGroup: string
+  neutralEmotions: string[];
+  happyEmotions: string[];
+  sadEmotions: string[];
+  angryEmotions: string[];
+  relaxedEmotions: string[];
+  idleMotionGroup: string;
+  neutralMotionGroup: string;
+  happyMotionGroup: string;
+  sadMotionGroup: string;
+  angryMotionGroup: string;
+  relaxedMotionGroup: string;
 }
 
 interface ModelProvider extends Live2DSettings {
-  selectAIService: AIService
-  selectAIModel: string
-  localLlmUrl: string
-  selectVoice: AIVoice
-  koeiroParam: KoeiroParam
-  googleTtsType: string
-  voicevoxSpeaker: string
-  voicevoxSpeed: number
-  voicevoxPitch: number
-  voicevoxIntonation: number
-  voicevoxServerUrl: string
-  aivisSpeechSpeaker: string
-  aivisSpeechSpeed: number
-  aivisSpeechPitch: number
-  aivisSpeechIntonation: number
-  aivisSpeechServerUrl: string
-  stylebertvits2ServerUrl: string
-  stylebertvits2ApiKey: string
-  stylebertvits2ModelId: string
-  stylebertvits2Style: string
-  stylebertvits2SdpRatio: number
-  stylebertvits2Length: number
-  gsviTtsServerUrl: string
-  gsviTtsModelId: string
-  gsviTtsBatchSize: number
-  gsviTtsSpeechRate: number
-  elevenlabsVoiceId: string
-  openaiTTSVoice: OpenAITTSVoice
-  openaiTTSModel: OpenAITTSModel
-  openaiTTSSpeed: number
-  nijivoiceApiKey: string
-  nijivoiceActorId: string
-  nijivoiceSpeed: number
-  nijivoiceEmotionalLevel: number
-  nijivoiceSoundDuration: number
+  selectAIService: AIService;
+  selectAIModel: string;
+  localLlmUrl: string;
+  selectVoice: AIVoice;
+  koeiroParam: KoeiroParam;
+  googleTtsType: string;
+  voicevoxSpeaker: string;
+  voicevoxSpeed: number;
+  voicevoxPitch: number;
+  voicevoxIntonation: number;
+  voicevoxServerUrl: string;
+  aivisSpeechSpeaker: string;
+  aivisSpeechSpeed: number;
+  aivisSpeechPitch: number;
+  aivisSpeechIntonation: number;
+  aivisSpeechServerUrl: string;
+  stylebertvits2ServerUrl: string;
+  stylebertvits2ApiKey: string;
+  stylebertvits2ModelId: string;
+  stylebertvits2Style: string;
+  stylebertvits2SdpRatio: number;
+  stylebertvits2Length: number;
+  gsviTtsServerUrl: string;
+  gsviTtsModelId: string;
+  gsviTtsBatchSize: number;
+  gsviTtsSpeechRate: number;
+  elevenlabsVoiceId: string;
+  openaiTTSVoice: OpenAITTSVoice;
+  openaiTTSModel: OpenAITTSModel;
+  openaiTTSSpeed: number;
+  nijivoiceApiKey: string;
+  nijivoiceActorId: string;
+  nijivoiceSpeed: number;
+  nijivoiceEmotionalLevel: number;
+  nijivoiceSoundDuration: number;
 }
 
 interface Integrations {
-  difyUrl: string
-  difyConversationId: string
-  youtubeMode: boolean
-  youtubeLiveId: string
-  youtubePlaying: boolean
-  youtubeNextPageToken: string
-  youtubeContinuationCount: number
-  youtubeNoCommentCount: number
-  youtubeSleepMode: boolean
-  conversationContinuityMode: boolean
+  difyUrl: string;
+  difyConversationId: string;
+  youtubeMode: boolean;
+  youtubeLiveId: string;
+  youtubePlaying: boolean;
+  youtubeNextPageToken: string;
+  youtubeContinuationCount: number;
+  youtubeNoCommentCount: number;
+  youtubeSleepMode: boolean;
+  conversationContinuityMode: boolean;
 }
 
 interface PDFSettings {
-  pdfContent: string
-  lastUploadedPDF: string
+  pdfContent: string;
+  lastUploadedPDF: string;
   pdfHistory: Array<{
-    name: string
-    content: string
-    uploadedAt: string
-  }>
+    name: string;
+    content: string;
+    uploadedAt: string;
+  }>;
 }
 
 interface Character {
-  characterName: string
-  showAssistantText: boolean
-  showCharacterName: boolean
-  systemPrompt: string
-  selectedVrmPath: string
-  selectedLive2DPath: string
-  pdfSettings: PDFSettings
+  characterName: string;
+  showAssistantText: boolean;
+  showCharacterName: boolean;
+  systemPrompt: string;
+  selectedVrmPath: string;
+  selectedLive2DPath: string;
+  pdfSettings: PDFSettings;
 }
 
 interface ResponseSettings {
-  enableCharacterLimit: boolean
-  characterLimit: number
-  excludeServiceDetails: boolean
+  enableCharacterLimit: boolean;
+  characterLimit: number;
+  excludeServiceDetails: boolean;
 }
 
 interface General {
-  selectLanguage: Language
-  changeEnglishToJapanese: boolean
-  includeTimestampInUserMessage: boolean
-  showControlPanel: boolean
-  externalLinkageMode: boolean
-  realtimeAPIMode: boolean
-  realtimeAPIModeContentType: RealtimeAPIModeContentType
-  realtimeAPIModeVoice: RealtimeAPIModeVoice | RealtimeAPIModeAzureVoice
-  audioMode: boolean
-  audioModeInputType: AudioModeInputType
-  audioModeVoice: OpenAITTSVoice
-  slideMode: boolean
-  messageReceiverEnabled: boolean
-  clientId: string
-  useSearchGrounding: boolean
-  maxResponseLength: number
-  responseSettings: ResponseSettings
+  selectLanguage: Language;
+  changeEnglishToJapanese: boolean;
+  includeTimestampInUserMessage: boolean;
+  showControlPanel: boolean;
+  externalLinkageMode: boolean;
+  realtimeAPIMode: boolean;
+  realtimeAPIModeContentType: RealtimeAPIModeContentType;
+  realtimeAPIModeVoice: RealtimeAPIModeVoice | RealtimeAPIModeAzureVoice;
+  audioMode: boolean;
+  audioModeInputType: AudioModeInputType;
+  audioModeVoice: OpenAITTSVoice;
+  slideMode: boolean;
+  messageReceiverEnabled: boolean;
+  clientId: string;
+  useSearchGrounding: boolean;
+  maxResponseLength: number;
+  responseSettings: ResponseSettings;
 }
 
 interface ModelType {
-  modelType: 'vrm' | 'live2d'
+  modelType: 'vrm' | 'live2d';
 }
 
 export type SettingsState = APIKeys &
@@ -168,7 +168,7 @@ export type SettingsState = APIKeys &
   Integrations &
   Character &
   General &
-  ModelType
+  ModelType;
 
 const settingsStore = create<SettingsState>()(
   persist(
@@ -275,7 +275,7 @@ const settingsStore = create<SettingsState>()(
       pdfSettings: {
         pdfContent: '',
         lastUploadedPDF: '',
-        pdfHistory: []
+        pdfHistory: [],
       },
 
       // General
@@ -321,7 +321,7 @@ const settingsStore = create<SettingsState>()(
       responseSettings: {
         enableCharacterLimit: false,
         characterLimit: 100,
-        excludeServiceDetails: false
+        excludeServiceDetails: false,
       },
 
       // NijiVoice settings
@@ -450,6 +450,6 @@ const settingsStore = create<SettingsState>()(
       }),
     }
   )
-)
+);
 
-export default settingsStore
+export default settingsStore;

@@ -1,26 +1,26 @@
-import Image from 'next/image'
-import { useTranslation } from 'react-i18next'
+import Image from 'next/image';
+import { useTranslation } from 'react-i18next';
 
-import homeStore from '@/features/stores/home'
-import settingsStore from '@/features/stores/settings'
-import { TextButton } from '../textButton'
-import { messageSelectors } from '@/features/messages/messageSelectors'
+import homeStore from '@/features/stores/home';
+import settingsStore from '@/features/stores/settings';
+import { TextButton } from '../textButton';
+import { messageSelectors } from '@/features/messages/messageSelectors';
 
 const Log = () => {
   const chatLog = messageSelectors.getTextAndImageMessages(
     homeStore((s) => s.chatLog)
-  )
-  const selectAIService = settingsStore((s) => s.selectAIService)
+  );
+  const selectAIService = settingsStore((s) => s.selectAIService);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const handleChangeChatLog = (targetIndex: number, text: string) => {
     const newChatLog = chatLog.map((m, i) => {
-      return i === targetIndex ? { role: m.role, content: text } : m
-    })
+      return i === targetIndex ? { role: m.role, content: text } : m;
+    });
 
-    homeStore.setState({ chatLog: newChatLog })
-  }
+    homeStore.setState({ chatLog: newChatLog });
+  };
 
   return (
     <div className="mt-40">
@@ -35,8 +35,8 @@ const Log = () => {
         </div>
         <TextButton
           onClick={() => {
-            homeStore.setState({ chatLog: [] })
-            settingsStore.setState({ difyConversationId: '' })
+            homeStore.setState({ chatLog: [] });
+            settingsStore.setState({ difyConversationId: '' });
           }}
         >
           {t('ConversationHistoryReset')}
@@ -62,7 +62,7 @@ const Log = () => {
                       type="text"
                       value={value.content}
                       onChange={(e) => {
-                        handleChangeChatLog(index, e.target.value)
+                        handleChangeChatLog(index, e.target.value);
                       }}
                     ></input>
                   ) : (
@@ -75,11 +75,11 @@ const Log = () => {
                   )}
                 </div>
               )
-            )
+            );
           })}
         </div>
       )}
     </div>
-  )
-}
-export default Log
+  );
+};
+export default Log;

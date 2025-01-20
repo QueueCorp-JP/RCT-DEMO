@@ -1,13 +1,13 @@
-import React from 'react'
-import { IconButton } from './iconButton'
+import React from 'react';
+import { IconButton } from './iconButton';
 
 interface SlideControlsProps {
-  currentSlide: number
-  slideCount: number
-  isPlaying: boolean
-  prevSlide: () => void
-  nextSlide: () => void
-  toggleIsPlaying: () => void
+  currentSlide: number;
+  slideCount: number;
+  isPlaying: boolean;
+  prevSlide: () => void;
+  nextSlide: () => void;
+  toggleIsPlaying: () => void;
 }
 
 const SlideControls: React.FC<SlideControlsProps> = ({
@@ -49,7 +49,7 @@ const SlideControls: React.FC<SlideControlsProps> = ({
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SlideControls
+export default SlideControls;

@@ -14,7 +14,7 @@ const ensureDirectories = () => {
   const pdfsDir = path.join(process.cwd(), 'public', 'pdfs');
 
   // 必要なディレクトリを作成
-  [logsDir, pdfsDir].forEach(dir => {
+  [logsDir, pdfsDir].forEach((dir) => {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
@@ -81,7 +81,7 @@ export default async function handler(
       let history = readHistory(historyPath);
 
       // 実際のPDFファイルが存在するエントリのみを返す
-      history = history.filter(entry => {
+      history = history.filter((entry) => {
         if (!entry.filePath) return false;
         const filePath = path.join(process.cwd(), 'public', entry.filePath);
         return verifyPDFFile(filePath);
@@ -103,7 +103,7 @@ export default async function handler(
       }
 
       let history = readHistory(historyPath);
-      const entryToDelete = history.find(entry => entry.name === fileName);
+      const entryToDelete = history.find((entry) => entry.name === fileName);
 
       if (!entryToDelete) {
         return res.status(404).json({ error: 'File not found in history' });
@@ -111,7 +111,11 @@ export default async function handler(
 
       // PDFファイルの削除
       if (entryToDelete.filePath) {
-        const filePath = path.join(process.cwd(), 'public', entryToDelete.filePath);
+        const filePath = path.join(
+          process.cwd(),
+          'public',
+          entryToDelete.filePath
+        );
         if (fs.existsSync(filePath)) {
           try {
             // ファイルの権限を変更して削除を試行
@@ -125,7 +129,7 @@ export default async function handler(
       }
 
       // 履歴から削除
-      history = history.filter(entry => entry.name !== fileName);
+      history = history.filter((entry) => entry.name !== fileName);
       writeHistory(historyPath, history);
 
       return res.status(200).json({ success: true });

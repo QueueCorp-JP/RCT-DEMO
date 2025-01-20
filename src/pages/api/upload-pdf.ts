@@ -13,10 +13,10 @@ export const config = {
 const ensureDirectories = () => {
   const dirs = {
     logs: path.join(process.cwd(), 'logs'),
-    pdfs: path.join(process.cwd(), 'public', 'pdfs')
+    pdfs: path.join(process.cwd(), 'public', 'pdfs'),
   };
 
-  Object.values(dirs).forEach(dir => {
+  Object.values(dirs).forEach((dir) => {
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
@@ -70,8 +70,8 @@ export default async function handler(
 
       // テキストを整形し、改善提案部分を除外
       const text = data.text
-        .split(/\n{2,}/)  // 空行で分割
-        .filter(section => {
+        .split(/\n{2,}/) // 空行で分割
+        .filter((section) => {
           // 改善提案関連のセクションを除外
           const excludePatterns = [
             '改善提案',
@@ -80,12 +80,12 @@ export default async function handler(
             '質問内容の分析',
             '改善が推奨',
             '以下の改善',
-            '占めています'
+            '占めています',
           ];
-          return !excludePatterns.some(pattern => section.includes(pattern));
+          return !excludePatterns.some((pattern) => section.includes(pattern));
         })
         .join('\n\n')
-        .replace(/\n{3,}/g, '\n\n')  // 3行以上の改行を2行に
+        .replace(/\n{3,}/g, '\n\n') // 3行以上の改行を2行に
         .trim();
 
       // 既存の履歴を読み込む
@@ -106,7 +106,7 @@ export default async function handler(
       }
 
       // 既存のファイルの権限を確認・修正
-      fs.readdirSync(pdfStorageDir).forEach(existingFile => {
+      fs.readdirSync(pdfStorageDir).forEach((existingFile) => {
         const filePath = path.join(pdfStorageDir, existingFile);
         verifyAndFixPermissions(filePath);
       });
@@ -126,7 +126,7 @@ export default async function handler(
 
         // ファイルをコピー
         fs.copyFileSync(file.filepath, storagePath);
-        
+
         // 適切な権限を設定
         fs.chmodSync(storagePath, 0o644);
 
@@ -146,7 +146,7 @@ export default async function handler(
           name: fileName,
           uploadedAt: new Date().toISOString(),
           content: text,
-          filePath: `/pdfs/${fileName}`
+          filePath: `/pdfs/${fileName}`,
         };
 
         // 履歴を更新（制限なし）
@@ -159,10 +159,10 @@ export default async function handler(
         // 一時ファイルを削除
         fs.unlinkSync(file.filepath);
 
-        return res.status(200).json({ 
+        return res.status(200).json({
           text,
           pageCount: data.numpages,
-          info: data.info
+          info: data.info,
         });
       } catch (error) {
         console.error('Error during file processing:', error);

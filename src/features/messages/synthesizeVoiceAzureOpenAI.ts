@@ -1,4 +1,4 @@
-import { Talk } from './messages'
+import { Talk } from './messages';
 
 export async function synthesizeVoiceAzureOpenAIApi(
   talk: Talk,
@@ -19,11 +19,11 @@ export async function synthesizeVoiceAzureOpenAIApi(
       apiKey,
       azureTTSEndpoint,
     }),
-  })
+  });
 
   if (!response.ok) {
-    throw new Error('Failed to generate speech')
+    throw new Error('Failed to generate speech');
   }
 
-  return await response.arrayBuffer()
+  return await response.arrayBuffer();
 }

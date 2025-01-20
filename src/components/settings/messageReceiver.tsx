@@ -1,33 +1,33 @@
-import React, { useCallback, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import settingsStore from '@/features/stores/settings'
-import { TextButton } from '../textButton'
-import { v4 as uuidv4 } from 'uuid'
+import React, { useCallback, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import settingsStore from '@/features/stores/settings';
+import { TextButton } from '../textButton';
+import { v4 as uuidv4 } from 'uuid';
 
 const MessageReceiverSetting = () => {
-  const { t } = useTranslation()
-  const { messageReceiverEnabled, clientId } = settingsStore()
+  const { t } = useTranslation();
+  const { messageReceiverEnabled, clientId } = settingsStore();
 
   const generateClientId = useCallback(() => {
     if (!clientId) {
-      const newClientId = uuidv4()
-      settingsStore.setState({ clientId: newClientId })
+      const newClientId = uuidv4();
+      settingsStore.setState({ clientId: newClientId });
     }
-  }, [clientId])
+  }, [clientId]);
 
   useEffect(() => {
     if (messageReceiverEnabled && !clientId) {
-      generateClientId()
+      generateClientId();
     }
-  }, [messageReceiverEnabled, clientId, generateClientId])
+  }, [messageReceiverEnabled, clientId, generateClientId]);
 
   const toggleMessageReceiver = () => {
-    const newState = !messageReceiverEnabled
-    settingsStore.setState({ messageReceiverEnabled: newState })
+    const newState = !messageReceiverEnabled;
+    settingsStore.setState({ messageReceiverEnabled: newState });
     if (newState && !clientId) {
-      generateClientId()
+      generateClientId();
     }
-  }
+  };
 
   return (
     <div className="mt-8 mb-8">
@@ -59,7 +59,7 @@ const MessageReceiverSetting = () => {
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default MessageReceiverSetting
+export default MessageReceiverSetting;

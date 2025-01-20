@@ -1,13 +1,13 @@
-import { KnownIconType } from '@charcoal-ui/icons'
-import { ButtonHTMLAttributes } from 'react'
+import { KnownIconType } from '@charcoal-ui/icons';
+import { ButtonHTMLAttributes } from 'react';
 
 type Props = ButtonHTMLAttributes<HTMLButtonElement> & {
-  iconName: keyof KnownIconType
-  isProcessing: boolean
-  isProcessingIcon?: keyof KnownIconType
-  label?: string
-  iconColor?: string
-}
+  iconName: keyof KnownIconType;
+  isProcessing: boolean;
+  isProcessingIcon?: keyof KnownIconType;
+  label?: string;
+  iconColor?: string;
+};
 
 export const IconButton = ({
   iconName,
@@ -32,5 +32,5 @@ export const IconButton = ({
       )}
       {label && <div className="mx-4 font-bold">{label}</div>}
     </button>
-  )
-}
+  );
+};

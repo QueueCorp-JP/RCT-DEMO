@@ -1,11 +1,11 @@
-import { buildUrl } from '@/utils/buildUrl'
-import Head from 'next/head'
+import { buildUrl } from '@/utils/buildUrl';
+import Head from 'next/head';
 
 export const Meta = () => {
-  const title = 'RCT JAPAN AVATAR'
+  const title = 'RCT JAPAN AVATAR';
   const description =
-    'RCTジャパンのAIアバターと会話できるWebアプリケーションです。'
-  const imageUrl = '/ogp.png'
+    'RCTジャパンのAIアバターと会話できるWebアプリケーションです。';
+  const imageUrl = '/ogp.png';
   return (
     <Head>
       <title>{title}</title>
@@ -18,5 +18,5 @@ export const Meta = () => {
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={imageUrl} />
     </Head>
-  )
-}
+  );
+};

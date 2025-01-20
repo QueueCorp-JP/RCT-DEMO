@@ -1,12 +1,12 @@
-import { Message } from '../messages/messages'
-import i18next from 'i18next'
-import toastStore from '@/features/stores/toast'
-import settingsStore from '@/features/stores/settings'
+import { Message } from '../messages/messages';
+import i18next from 'i18next';
+import toastStore from '@/features/stores/toast';
+import settingsStore from '@/features/stores/settings';
 
 function handleApiError(errorCode: string): string {
-  const languageCode = settingsStore.getState().selectLanguage
-  i18next.changeLanguage(languageCode)
-  return i18next.t(`Errors.${errorCode || 'LocalLLMError'}`)
+  const languageCode = settingsStore.getState().selectLanguage;
+  i18next.changeLanguage(languageCode);
+  return i18next.t(`Errors.${errorCode || 'LocalLLMError'}`);
 }
 
 export async function getLocalLLMChatResponseStream(
@@ -22,76 +22,76 @@ export async function getLocalLLMChatResponseStream(
         model,
         messages,
       }),
-    })
+    });
 
     if (!response.ok) {
-      const responseBody = await response.json()
+      const responseBody = await response.json();
       throw new Error(
         `Local LLM API request failed with status ${response.status}`,
         { cause: { errorCode: responseBody.errorCode } }
-      )
+      );
     }
 
-    const stream = response.body
+    const stream = response.body;
     if (!stream) {
       throw new Error('No stream in response', {
         cause: { errorCode: 'LocalLLMStreamError' },
-      })
+      });
     }
 
-    const reader = stream.getReader()
+    const reader = stream.getReader();
 
     return new ReadableStream({
       async start(controller: ReadableStreamDefaultController) {
-        let accumulatedChunks = ''
+        let accumulatedChunks = '';
         try {
           while (true) {
-            const { done, value } = await reader.read()
-            if (done) break
+            const { done, value } = await reader.read();
+            if (done) break;
 
-            const chunk = new TextDecoder().decode(value)
-            accumulatedChunks += chunk
+            const chunk = new TextDecoder().decode(value);
+            accumulatedChunks += chunk;
 
             try {
-              const trimmedChunks = accumulatedChunks.trimStart()
-              const data = JSON.parse(trimmedChunks.slice(6))
+              const trimmedChunks = accumulatedChunks.trimStart();
+              const data = JSON.parse(trimmedChunks.slice(6));
 
               if (data.choices && data.choices.length > 0) {
-                const content = data.choices[0].delta.content
-                controller.enqueue(content)
-                accumulatedChunks = ''
+                const content = data.choices[0].delta.content;
+                controller.enqueue(content);
+                accumulatedChunks = '';
               }
             } catch (error) {
               // JSONが不完全な場合は続行
             }
           }
         } catch (error: any) {
-          console.error('Error in Local LLM stream:', error)
+          console.error('Error in Local LLM stream:', error);
           const errorMessage = handleApiError(
             error.cause?.errorCode || 'LocalLLMStreamError'
-          )
+          );
           toastStore.getState().addToast({
             message: errorMessage,
             type: 'error',
             tag: 'local-llm-error',
-          })
-          controller.error(error)
+          });
+          controller.error(error);
         } finally {
-          controller.close()
-          reader.releaseLock()
+          controller.close();
+          reader.releaseLock();
         }
       },
-    })
+    });
   } catch (error: any) {
-    console.error('Error in Local LLM request:', error)
+    console.error('Error in Local LLM request:', error);
     const errorMessage = handleApiError(
       error.cause?.errorCode || 'LocalLLMError'
-    )
+    );
     toastStore.getState().addToast({
       message: errorMessage,
       type: 'error',
       tag: 'local-llm-error',
-    })
-    throw error
+    });
+    throw error;
   }
 }

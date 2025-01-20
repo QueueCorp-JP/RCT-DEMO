@@ -1,53 +1,53 @@
-import { useTranslation } from 'react-i18next'
-import menuStore from '@/features/stores/menu'
-import settingsStore from '@/features/stores/settings'
-import slideStore from '@/features/stores/slide'
-import { SYSTEM_PROMPT } from '@/features/constants/systemPromptConstants'
-import { Link } from '../link'
-import { TextButton } from '../textButton'
-import { useCallback } from 'react'
-import { multiModalAIServices } from '@/features/stores/settings'
+import { useTranslation } from 'react-i18next';
+import menuStore from '@/features/stores/menu';
+import settingsStore from '@/features/stores/settings';
+import slideStore from '@/features/stores/slide';
+import { SYSTEM_PROMPT } from '@/features/constants/systemPromptConstants';
+import { Link } from '../link';
+import { TextButton } from '../textButton';
+import { useCallback } from 'react';
+import { multiModalAIServices } from '@/features/stores/settings';
 import {
   AudioModeInputType,
   OpenAITTSVoice,
   RealtimeAPIModeContentType,
   RealtimeAPIModeVoice,
   RealtimeAPIModeAzureVoice,
-} from '@/features/constants/settings'
-import toastStore from '@/features/stores/toast'
-import webSocketStore from '@/features/stores/websocketStore'
+} from '@/features/constants/settings';
+import toastStore from '@/features/stores/toast';
+import webSocketStore from '@/features/stores/websocketStore';
 
 const ModelProvider = () => {
-  const externalLinkageMode = settingsStore((s) => s.externalLinkageMode)
-  const realtimeAPIMode = settingsStore((s) => s.realtimeAPIMode)
+  const externalLinkageMode = settingsStore((s) => s.externalLinkageMode);
+  const realtimeAPIMode = settingsStore((s) => s.realtimeAPIMode);
   const realtimeAPIModeContentType = settingsStore(
     (s) => s.realtimeAPIModeContentType
-  )
-  const realtimeAPIModeVoice = settingsStore((s) => s.realtimeAPIModeVoice)
-  const audioMode = settingsStore((s) => s.audioMode)
-  const audioModeInputType = settingsStore((s) => s.audioModeInputType)
-  const audioModeVoice = settingsStore((s) => s.audioModeVoice)
-  const openaiKey = settingsStore((s) => s.openaiKey)
-  const anthropicKey = settingsStore((s) => s.anthropicKey)
-  const googleKey = settingsStore((s) => s.googleKey)
-  const azureKey = settingsStore((s) => s.azureKey)
-  const azureEndpoint = settingsStore((s) => s.azureEndpoint)
-  const groqKey = settingsStore((s) => s.groqKey)
-  const cohereKey = settingsStore((s) => s.cohereKey)
-  const mistralaiKey = settingsStore((s) => s.mistralaiKey)
-  const perplexityKey = settingsStore((s) => s.perplexityKey)
-  const fireworksKey = settingsStore((s) => s.fireworksKey)
-  const difyKey = settingsStore((s) => s.difyKey)
-  const useSearchGrounding = settingsStore((s) => s.useSearchGrounding)
+  );
+  const realtimeAPIModeVoice = settingsStore((s) => s.realtimeAPIModeVoice);
+  const audioMode = settingsStore((s) => s.audioMode);
+  const audioModeInputType = settingsStore((s) => s.audioModeInputType);
+  const audioModeVoice = settingsStore((s) => s.audioModeVoice);
+  const openaiKey = settingsStore((s) => s.openaiKey);
+  const anthropicKey = settingsStore((s) => s.anthropicKey);
+  const googleKey = settingsStore((s) => s.googleKey);
+  const azureKey = settingsStore((s) => s.azureKey);
+  const azureEndpoint = settingsStore((s) => s.azureEndpoint);
+  const groqKey = settingsStore((s) => s.groqKey);
+  const cohereKey = settingsStore((s) => s.cohereKey);
+  const mistralaiKey = settingsStore((s) => s.mistralaiKey);
+  const perplexityKey = settingsStore((s) => s.perplexityKey);
+  const fireworksKey = settingsStore((s) => s.fireworksKey);
+  const difyKey = settingsStore((s) => s.difyKey);
+  const useSearchGrounding = settingsStore((s) => s.useSearchGrounding);
 
-  const selectAIService = settingsStore((s) => s.selectAIService)
-  const selectAIModel = settingsStore((s) => s.selectAIModel)
-  const localLlmUrl = settingsStore((s) => s.localLlmUrl)
-  const systemPrompt = settingsStore((s) => s.systemPrompt)
+  const selectAIService = settingsStore((s) => s.selectAIService);
+  const selectAIModel = settingsStore((s) => s.selectAIModel);
+  const localLlmUrl = settingsStore((s) => s.localLlmUrl);
+  const systemPrompt = settingsStore((s) => s.systemPrompt);
 
-  const difyUrl = settingsStore((s) => s.difyUrl)
+  const difyUrl = settingsStore((s) => s.difyUrl);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   // オブジェクトを定義して、各AIサービスのデフォルトモデルを保存する
   // ローカルLLMが選択された場合、AIモデルを空文字に設定
@@ -63,68 +63,68 @@ const ModelProvider = () => {
     fireworks: 'accounts/fireworks/models/firefunction-v2',
     localLlm: '',
     dify: '',
-  }
+  };
 
   const handleAIServiceChange = useCallback(
     (newService: keyof typeof defaultModels) => {
       settingsStore.setState({
         selectAIService: newService,
         selectAIModel: defaultModels[newService],
-      })
+      });
 
       if (!multiModalAIServices.includes(newService as any)) {
-        menuStore.setState({ showWebcam: false })
+        menuStore.setState({ showWebcam: false });
 
         settingsStore.setState({
           conversationContinuityMode: false,
           slideMode: false,
-        })
+        });
         slideStore.setState({
           isPlaying: false,
-        })
+        });
       }
 
       if (newService !== 'openai' && newService !== 'azure') {
-        settingsStore.setState({ realtimeAPIMode: false })
+        settingsStore.setState({ realtimeAPIMode: false });
       }
     },
     []
-  )
+  );
 
   const handleRealtimeAPIModeChange = useCallback((newMode: boolean) => {
     settingsStore.setState({
       realtimeAPIMode: newMode,
-    })
+    });
     if (newMode) {
-      settingsStore.setState({ audioMode: false })
+      settingsStore.setState({ audioMode: false });
       settingsStore.setState({
         selectAIModel: 'gpt-4o-realtime-preview-2024-12-17',
-      })
+      });
     }
-  }, [])
+  }, []);
 
   const handleAudioModeChange = useCallback((newMode: boolean) => {
     settingsStore.setState({
       audioMode: newMode,
-    })
+    });
     if (newMode) {
-      settingsStore.setState({ realtimeAPIMode: false })
+      settingsStore.setState({ realtimeAPIMode: false });
       settingsStore.setState({
         selectAIModel: 'gpt-4o-audio-preview-2024-12-17',
-      })
+      });
     }
-  }, [])
+  }, []);
 
   const handleUpdate = useCallback(() => {
-    const wsManager = webSocketStore.getState().wsManager
+    const wsManager = webSocketStore.getState().wsManager;
     if (!wsManager || !wsManager.reconnect()) {
       toastStore.getState().addToast({
         message: t('Toasts.WebSocketReconnectFailed'),
         type: 'error',
         duration: 3000,
-      })
+      });
     }
-  }, [t])
+  }, [t]);
 
   return externalLinkageMode ? null : (
     <div className="mt-24">
@@ -186,7 +186,7 @@ const ModelProvider = () => {
                 <div className="my-8">
                   <TextButton
                     onClick={() => {
-                      handleRealtimeAPIModeChange(!realtimeAPIMode)
+                      handleRealtimeAPIModeChange(!realtimeAPIMode);
                     }}
                   >
                     {realtimeAPIMode ? t('StatusOn') : t('StatusOff')}
@@ -200,7 +200,7 @@ const ModelProvider = () => {
                 <div className="my-8">
                   <TextButton
                     onClick={() => {
-                      handleAudioModeChange(!audioMode)
+                      handleAudioModeChange(!audioMode);
                     }}
                   >
                     {audioMode ? t('StatusOn') : t('StatusOff')}
@@ -216,11 +216,11 @@ const ModelProvider = () => {
                     className="px-16 py-8 w-col-span-2 bg-surface1 hover:bg-surface1-hover rounded-8"
                     value={realtimeAPIModeContentType}
                     onChange={(e) => {
-                      const model = e.target.value
+                      const model = e.target.value;
                       settingsStore.setState({
                         realtimeAPIModeContentType:
                           model as RealtimeAPIModeContentType,
-                      })
+                      });
                     }}
                   >
                     <option value="input_text">{t('InputText')}</option>
@@ -233,10 +233,10 @@ const ModelProvider = () => {
                     className="px-16 py-8 w-col-span-2 bg-surface1 hover:bg-surface1-hover rounded-8"
                     value={realtimeAPIModeVoice}
                     onChange={(e) => {
-                      const model = e.target.value
+                      const model = e.target.value;
                       settingsStore.setState({
                         realtimeAPIModeVoice: model as RealtimeAPIModeVoice,
-                      })
+                      });
                     }}
                   >
                     <option value="alloy">alloy</option>
@@ -256,8 +256,8 @@ const ModelProvider = () => {
                       className="px-16 py-8 w-col-span-2 bg-surface1 hover:bg-surface1-hover rounded-8"
                       value={selectAIModel}
                       onChange={(e) => {
-                        const model = e.target.value
-                        settingsStore.setState({ selectAIModel: model })
+                        const model = e.target.value;
+                        settingsStore.setState({ selectAIModel: model });
                       }}
                     >
                       <option value="gpt-4o-realtime-preview-2024-10-01">
@@ -290,10 +290,10 @@ const ModelProvider = () => {
                     className="px-16 py-8 w-col-span-2 bg-surface1 hover:bg-surface1-hover rounded-8"
                     value={audioModeInputType}
                     onChange={(e) => {
-                      const model = e.target.value
+                      const model = e.target.value;
                       settingsStore.setState({
                         audioModeInputType: model as AudioModeInputType,
-                      })
+                      });
                     }}
                   >
                     <option value="input_text">{t('InputText')}</option>
@@ -306,10 +306,10 @@ const ModelProvider = () => {
                     className="px-16 py-8 w-col-span-2 bg-surface1 hover:bg-surface1-hover rounded-8"
                     value={audioModeVoice}
                     onChange={(e) => {
-                      const model = e.target.value
+                      const model = e.target.value;
                       settingsStore.setState({
                         audioModeVoice: model as OpenAITTSVoice,
-                      })
+                      });
                     }}
                   >
                     <option value="alloy">alloy</option>
@@ -327,8 +327,8 @@ const ModelProvider = () => {
                       className="px-16 py-8 w-col-span-2 bg-surface1 hover:bg-surface1-hover rounded-8"
                       value={selectAIModel}
                       onChange={(e) => {
-                        const model = e.target.value
-                        settingsStore.setState({ selectAIModel: model })
+                        const model = e.target.value;
+                        settingsStore.setState({ selectAIModel: model });
                       }}
                     >
                       <option value="gpt-4o-audio-preview-2024-10-01">
@@ -353,15 +353,15 @@ const ModelProvider = () => {
                     className="px-16 py-8 w-col-span-2 bg-surface1 hover:bg-surface1-hover rounded-8"
                     value={selectAIModel}
                     onChange={(e) => {
-                      const model = e.target.value
-                      settingsStore.setState({ selectAIModel: model })
+                      const model = e.target.value;
+                      settingsStore.setState({ selectAIModel: model });
 
                       if (
                         model !== 'gpt-4-turbo' &&
                         model !== 'gpt-4o' &&
                         model !== 'gpt-4o-mini'
                       ) {
-                        menuStore.setState({ showWebcam: false })
+                        menuStore.setState({ showWebcam: false });
                       }
                     }}
                   >
@@ -374,7 +374,7 @@ const ModelProvider = () => {
                 </div>
               )}
             </>
-          )
+          );
         } else if (selectAIService === 'anthropic') {
           return (
             <>
@@ -422,7 +422,7 @@ const ModelProvider = () => {
                 </select>
               </div>
             </>
-          )
+          );
         } else if (selectAIService === 'google') {
           return (
             <>
@@ -490,7 +490,7 @@ const ModelProvider = () => {
                     onClick={() => {
                       settingsStore.setState({
                         useSearchGrounding: !useSearchGrounding,
-                      })
+                      });
                     }}
                   >
                     {useSearchGrounding ? t('StatusOn') : t('StatusOff')}
@@ -498,7 +498,7 @@ const ModelProvider = () => {
                 </div>
               </div>
             </>
-          )
+          );
         } else if (selectAIService === 'azure') {
           return (
             <>
@@ -552,7 +552,7 @@ const ModelProvider = () => {
                 <div className="my-8">
                   <TextButton
                     onClick={() => {
-                      handleRealtimeAPIModeChange(!realtimeAPIMode)
+                      handleRealtimeAPIModeChange(!realtimeAPIMode);
                     }}
                   >
                     {realtimeAPIMode ? t('StatusOn') : t('StatusOff')}
@@ -567,11 +567,11 @@ const ModelProvider = () => {
                       className="px-16 py-8 w-col-span-2 bg-surface1 hover:bg-surface1-hover rounded-8"
                       value={realtimeAPIModeContentType}
                       onChange={(e) => {
-                        const model = e.target.value
+                        const model = e.target.value;
                         settingsStore.setState({
                           realtimeAPIModeContentType:
                             model as RealtimeAPIModeContentType,
-                        })
+                        });
                       }}
                     >
                       <option value="input_text">{t('InputText')}</option>
@@ -584,11 +584,11 @@ const ModelProvider = () => {
                       className="px-16 py-8 w-col-span-2 bg-surface1 hover:bg-surface1-hover rounded-8"
                       value={realtimeAPIModeVoice}
                       onChange={(e) => {
-                        const model = e.target.value
+                        const model = e.target.value;
                         settingsStore.setState({
                           realtimeAPIModeVoice:
                             model as RealtimeAPIModeAzureVoice,
-                        })
+                        });
                       }}
                     >
                       <option value="alloy">alloy</option>
@@ -615,7 +615,7 @@ const ModelProvider = () => {
                 )}
               </div>
             </>
-          )
+          );
         } else if (selectAIService === 'groq') {
           return (
             <>
@@ -663,7 +663,7 @@ const ModelProvider = () => {
                 </select>
               </div>
             </>
-          )
+          );
         } else if (selectAIService === 'cohere') {
           return (
             <>
@@ -716,7 +716,7 @@ const ModelProvider = () => {
                 </select>
               </div>
             </>
-          )
+          );
         } else if (selectAIService === 'mistralai') {
           return (
             <>
@@ -764,7 +764,7 @@ const ModelProvider = () => {
                 </select>
               </div>
             </>
-          )
+          );
         } else if (selectAIService === 'perplexity') {
           return (
             <>
@@ -821,7 +821,7 @@ const ModelProvider = () => {
                 </select>
               </div>
             </>
-          )
+          );
         } else if (selectAIService === 'fireworks') {
           return (
             <>
@@ -884,7 +884,7 @@ const ModelProvider = () => {
                 </select>
               </div>
             </>
-          )
+          );
         } else if (selectAIService === 'localLlm') {
           return (
             <>
@@ -935,7 +935,7 @@ const ModelProvider = () => {
                 />
               </div>
             </>
-          )
+          );
         } else if (selectAIService === 'dify') {
           return (
             <>
@@ -970,7 +970,7 @@ const ModelProvider = () => {
                 />
               </div>
             </>
-          )
+          );
         }
       })()}
 
@@ -1003,6 +1003,6 @@ const ModelProvider = () => {
         ></textarea>
       </div>
     </div>
-  )
-}
-export default ModelProvider
+  );
+};
+export default ModelProvider;

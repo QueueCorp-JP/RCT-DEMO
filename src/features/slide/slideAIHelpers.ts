@@ -1,23 +1,23 @@
-import { getVercelAIChatResponse } from '@/features/chat/vercelAIChat'
+import { getVercelAIChatResponse } from '@/features/chat/vercelAIChat';
 import settingsStore, {
   multiModalAIServiceKey,
   multiModalAIServices,
-} from '@/features/stores/settings'
+} from '@/features/stores/settings';
 
 export const judgeSlide = async (
   queryText: string,
   scripts: string,
   supplement: string
 ): Promise<string> => {
-  const ss = settingsStore.getState()
-  const aiService = ss.selectAIService as multiModalAIServiceKey
+  const ss = settingsStore.getState();
+  const aiService = ss.selectAIService as multiModalAIServiceKey;
 
   if (!multiModalAIServices.includes(aiService)) {
-    throw new Error('Invalid AI service')
+    throw new Error('Invalid AI service');
   }
 
-  const apiKeyName = `${aiService}Key` as const
-  const apiKey = ss[apiKeyName]
+  const apiKeyName = `${aiService}Key` as const;
+  const apiKey = ss[apiKeyName];
 
   const systemMessage = `
 You are an AI tasked with determining whether a user's comment is a question about a given script document and supplementary text, and if so, which page of the document is most relevant to the question. Follow these instructions carefully:
@@ -53,11 +53,11 @@ ${supplement}
 </document>
 
 Based on the user's comment and the content of both the script document and supplementary text, provide "only" your final answer in the specified JSON format.
-`
+`;
 
   const response = await getVercelAIChatResponse([
     { role: 'system', content: systemMessage },
     { role: 'user', content: queryText },
-  ])
-  return response.text
-}
+  ]);
+  return response.text;
+};

@@ -1,14 +1,14 @@
-import { Message } from './messages'
+import { Message } from './messages';
 
 export const messageSelectors = {
   // テキストまたは画像を含むメッセージのみを取得
   getTextAndImageMessages: (messages: Message[]): Message[] => {
     return messages.filter((message): boolean => {
-      if (!message.content) return false
+      if (!message.content) return false;
       return (
         typeof message.content === 'string' || Array.isArray(message.content)
-      )
-    })
+      );
+    });
   },
 
   // 音声メッセージのみを取得
@@ -16,15 +16,15 @@ export const messageSelectors = {
     return messages.filter((message) => {
       // userの場合：contentがstring型のメッセージのみを許可
       if (message.role === 'user') {
-        return typeof message.content === 'string'
+        return typeof message.content === 'string';
       }
       // assistantの場合：audioプロパティを持つメッセージのみを許可
       if (message.role === 'assistant') {
-        return message.audio !== undefined
+        return message.audio !== undefined;
       }
       // その他のroleは除外
-      return false
-    })
+      return false;
+    });
   },
 
   // メッセージを処理して、テキストメッセージのみを取得
@@ -35,24 +35,24 @@ export const messageSelectors = {
     return messages
       .map((message, index) => {
         // 最後のメッセージだけそのまま利用する（= 最後のメッセージだけマルチモーダルの対象となる）
-        const isLastMessage = index === messages.length - 1
+        const isLastMessage = index === messages.length - 1;
         const messageText = Array.isArray(message.content)
           ? message.content[0].text
-          : message.content || ''
+          : message.content || '';
 
-        let content: Message['content']
+        let content: Message['content'];
         if (includeTimestamp) {
           content = message.timestamp
             ? `[${message.timestamp}] ${messageText}`
-            : messageText
+            : messageText;
           if (isLastMessage && Array.isArray(message.content)) {
             content = [
               { type: 'text', text: content },
               { type: 'image', image: message.content[1].image },
-            ]
+            ];
           }
         } else {
-          content = isLastMessage ? message.content : messageText
+          content = isLastMessage ? message.content : messageText;
         }
 
         return {
@@ -60,13 +60,13 @@ export const messageSelectors = {
             ? message.role
             : 'assistant',
           content,
-        }
+        };
       })
-      .slice(-10)
+      .slice(-10);
   },
 
   normalizeMessages: (messages: Message[]): Message[] => {
-    let lastImageUrl = ''
+    let lastImageUrl = '';
     return messages
       .reduce((acc: Message[], item: Message) => {
         if (
@@ -75,22 +75,22 @@ export const messageSelectors = {
           item.content[0] &&
           item.content[1]
         ) {
-          lastImageUrl = item.content[1].image
+          lastImageUrl = item.content[1].image;
         }
 
-        const lastItem = acc[acc.length - 1]
+        const lastItem = acc[acc.length - 1];
         if (lastItem && lastItem.role === item.role) {
           if (typeof item.content != 'string' && item.content) {
-            lastItem.content += ' ' + item.content[0].text
+            lastItem.content += ' ' + item.content[0].text;
           } else {
-            lastItem.content += ' ' + item.content
+            lastItem.content += ' ' + item.content;
           }
         } else {
           const text = item.content
             ? typeof item.content != 'string'
               ? item.content[0].text
               : item.content
-            : ''
+            : '';
           if (lastImageUrl != '') {
             acc.push({
               ...item,
@@ -98,15 +98,15 @@ export const messageSelectors = {
                 { type: 'text', text: text.trim() },
                 { type: 'image', image: lastImageUrl },
               ],
-            })
-            lastImageUrl = ''
+            });
+            lastImageUrl = '';
           } else {
-            acc.push({ ...item, content: text.trim() })
+            acc.push({ ...item, content: text.trim() });
           }
         }
-        return acc
+        return acc;
       }, [])
-      .filter((item) => item.content !== '')
+      .filter((item) => item.content !== '');
   },
 
   // 画像メッセージをテキストメッセージに変換
@@ -119,6 +119,6 @@ export const messageSelectors = {
           : typeof message.content === 'string'
             ? message.content
             : message.content[0].text,
-    }))
+    }));
   },
-}
+};

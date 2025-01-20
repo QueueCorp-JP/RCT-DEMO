@@ -1,35 +1,35 @@
-import i18n from 'i18next'
-import { useEffect, useState } from 'react'
-import { useTranslation, Trans } from 'react-i18next'
+import i18n from 'i18next';
+import { useEffect, useState } from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 
-import homeStore from '@/features/stores/home'
-import settingsStore from '@/features/stores/settings'
-import { IconButton } from './iconButton'
-import { Link } from './link'
-import { isLanguageSupported } from '@/features/constants/settings'
+import homeStore from '@/features/stores/home';
+import settingsStore from '@/features/stores/settings';
+import { IconButton } from './iconButton';
+import { Link } from './link';
+import { isLanguageSupported } from '@/features/constants/settings';
 
 export const Introduction = () => {
-  const showIntroduction = homeStore((s) => s.showIntroduction)
-  const selectLanguage = settingsStore((s) => s.selectLanguage)
+  const showIntroduction = homeStore((s) => s.showIntroduction);
+  const selectLanguage = settingsStore((s) => s.selectLanguage);
 
-  const [displayIntroduction, setDisplayIntroduction] = useState(false)
-  const [opened, setOpened] = useState(true)
+  const [displayIntroduction, setDisplayIntroduction] = useState(false);
+  const [opened, setOpened] = useState(true);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   useEffect(() => {
-    setDisplayIntroduction(homeStore.getState().showIntroduction)
-  }, [showIntroduction])
+    setDisplayIntroduction(homeStore.getState().showIntroduction);
+  }, [showIntroduction]);
 
   const updateLanguage = () => {
-    console.log('i18n.language', i18n.language)
+    console.log('i18n.language', i18n.language);
 
-    let languageCode = i18n.language
+    let languageCode = i18n.language;
 
     settingsStore.setState({
       selectLanguage: isLanguageSupported(languageCode) ? languageCode : 'ja',
-    })
-  }
+    });
+  };
 
   return displayIntroduction && opened ? (
     <div className="absolute z-40 w-full h-full px-24 py-40 bg-black/30 font-M_PLUS_2">
@@ -38,8 +38,8 @@ export const Introduction = () => {
           iconName="24/Close"
           isProcessing={false}
           onClick={() => {
-            setOpened(false)
-            updateLanguage()
+            setOpened(false);
+            updateLanguage();
           }}
           className="absolute top-8 right-8 bg-secondary hover:bg-secondary-hover active:bg-secondary-press disabled:bg-secondary-disabled text-white"
         ></IconButton>
@@ -114,8 +114,8 @@ export const Introduction = () => {
               onChange={(e) => {
                 homeStore.setState({
                   showIntroduction: e.target.checked,
-                })
-                updateLanguage()
+                });
+                updateLanguage();
               }}
               className="mr-8"
             />
@@ -126,8 +126,8 @@ export const Introduction = () => {
         <div className="my-24">
           <button
             onClick={() => {
-              setOpened(false)
-              updateLanguage()
+              setOpened(false);
+              updateLanguage();
             }}
             className="font-bold bg-secondary hover:bg-secondary-hover active:bg-secondary-press disabled:bg-secondary-disabled text-white px-24 py-8 rounded-oval"
           >
@@ -145,5 +145,5 @@ export const Introduction = () => {
         )}
       </div>
     </div>
-  ) : null
-}
+  ) : null;
+};

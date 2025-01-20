@@ -1,4 +1,4 @@
-import { Talk } from './messages'
+import { Talk } from './messages';
 
 export async function synthesizeVoiceNijivoiceApi(
   talk: Talk,
@@ -22,20 +22,20 @@ export async function synthesizeVoiceNijivoiceApi(
         emotionalLevel,
         soundDuration,
       }),
-    })
+    });
 
     if (!res.ok) {
       throw new Error(
         `Nijivoice APIからの応答が異常です。ステータスコード: ${res.status}`
-      )
+      );
     }
 
-    return await res.arrayBuffer()
+    return await res.arrayBuffer();
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`Nijivoiceでエラーが発生しました: ${error.message}`)
+      throw new Error(`Nijivoiceでエラーが発生しました: ${error.message}`);
     } else {
-      throw new Error('Nijivoiceで不明なエラーが発生しました')
+      throw new Error('Nijivoiceで不明なエラーが発生しました');
     }
   }
 }

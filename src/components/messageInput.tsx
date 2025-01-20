@@ -1,20 +1,20 @@
-import { useState, useEffect, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import homeStore from '@/features/stores/home'
-import settingsStore from '@/features/stores/settings'
-import slideStore from '@/features/stores/slide'
-import { IconButton } from './iconButton'
+import homeStore from '@/features/stores/home';
+import settingsStore from '@/features/stores/settings';
+import slideStore from '@/features/stores/slide';
+import { IconButton } from './iconButton';
 
 type Props = {
-  userMessage: string
-  isMicRecording: boolean
+  userMessage: string;
+  isMicRecording: boolean;
   onChangeUserMessage: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void
-  onClickSendButton: (event: React.MouseEvent<HTMLButtonElement>) => void
-  onClickMicButton: (event: React.MouseEvent<HTMLButtonElement>) => void
-}
+  ) => void;
+  onClickSendButton: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  onClickMicButton: (event: React.MouseEvent<HTMLButtonElement>) => void;
+};
 
 export const MessageInput = ({
   userMessage,
@@ -23,44 +23,44 @@ export const MessageInput = ({
   onClickMicButton,
   onClickSendButton,
 }: Props) => {
-  const chatProcessing = homeStore((s) => s.chatProcessing)
-  const slidePlaying = slideStore((s) => s.isPlaying)
-  const [rows, setRows] = useState(1)
-  const [loadingDots, setLoadingDots] = useState('')
-  const [showPermissionModal, setShowPermissionModal] = useState(false)
-  const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const realtimeAPIMode = settingsStore((s) => s.realtimeAPIMode)
+  const chatProcessing = homeStore((s) => s.chatProcessing);
+  const slidePlaying = slideStore((s) => s.isPlaying);
+  const [rows, setRows] = useState(1);
+  const [loadingDots, setLoadingDots] = useState('');
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const realtimeAPIMode = settingsStore((s) => s.realtimeAPIMode);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (chatProcessing) {
       const interval = setInterval(() => {
         setLoadingDots((prev) => {
-          if (prev === '...') return ''
-          return prev + '.'
-        })
-      }, 200)
+          if (prev === '...') return '';
+          return prev + '.';
+        });
+      }, 200);
 
-      return () => clearInterval(interval)
+      return () => clearInterval(interval);
     } else {
       if (textareaRef.current) {
-        textareaRef.current.value = ''
+        textareaRef.current.value = '';
         const isTouchDevice = () => {
-          if (typeof window === 'undefined') return false
+          if (typeof window === 'undefined') return false;
           return (
             'ontouchstart' in window ||
             navigator.maxTouchPoints > 0 ||
             // @ts-expect-error: msMaxTouchPoints is IE-specific
             navigator.msMaxTouchPoints > 0
-          )
-        }
+          );
+        };
         if (!isTouchDevice()) {
-          textareaRef.current.focus()
+          textareaRef.current.focus();
         }
       }
     }
-  }, [chatProcessing])
+  }, [chatProcessing]);
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (
@@ -69,27 +69,27 @@ export const MessageInput = ({
       event.key === 'Enter' &&
       !event.shiftKey
     ) {
-      event.preventDefault() // デフォルトの挙動を防止
+      event.preventDefault(); // デフォルトの挙動を防止
       if (userMessage.trim() !== '') {
         onClickSendButton(
           event as unknown as React.MouseEvent<HTMLButtonElement>
-        )
-        setRows(1)
+        );
+        setRows(1);
       }
     } else if (event.key === 'Enter' && event.shiftKey) {
-      setRows(rows + 1)
+      setRows(rows + 1);
     } else if (
       event.key === 'Backspace' &&
       rows > 1 &&
       userMessage.slice(-1) === '\n'
     ) {
-      setRows(rows - 1)
+      setRows(rows - 1);
     }
-  }
+  };
 
   const handleMicClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onClickMicButton(event)
-  }
+    onClickMicButton(event);
+  };
 
   return (
     <div className="absolute bottom-0 z-20 w-screen">
@@ -147,5 +147,5 @@ export const MessageInput = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

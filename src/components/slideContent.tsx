@@ -1,7 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 interface SlideContentProps {
-  marpitContainer: Element | null
+  marpitContainer: Element | null;
 }
 
 const SlideContent: React.FC<SlideContentProps> = ({ marpitContainer }) => {
@@ -14,7 +14,7 @@ const SlideContent: React.FC<SlideContentProps> = ({ marpitContainer }) => {
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default SlideContent
+export default SlideContent;

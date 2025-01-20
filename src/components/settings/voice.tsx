@@ -1,100 +1,100 @@
-import { useTranslation } from 'react-i18next'
-import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next';
+import { useState, useEffect } from 'react';
 
 import {
   PRESET_A,
   PRESET_B,
   PRESET_C,
   PRESET_D,
-} from '@/features/constants/koeiroParam'
+} from '@/features/constants/koeiroParam';
 import {
   AIVoice,
   OpenAITTSVoice,
   OpenAITTSModel,
-} from '@/features/constants/settings'
-import { testVoiceVox } from '@/features/messages/speakCharacter'
-import { testAivisSpeech } from '@/features/messages/speakCharacter'
-import settingsStore from '@/features/stores/settings'
-import { Link } from '../link'
-import { TextButton } from '../textButton'
-import speakers from '../speakers.json'
-import speakers_aivis from '../speakers_aivis.json'
+} from '@/features/constants/settings';
+import { testVoiceVox } from '@/features/messages/speakCharacter';
+import { testAivisSpeech } from '@/features/messages/speakCharacter';
+import settingsStore from '@/features/stores/settings';
+import { Link } from '../link';
+import { TextButton } from '../textButton';
+import speakers from '../speakers.json';
+import speakers_aivis from '../speakers_aivis.json';
 
 const Voice = () => {
-  const koeiromapKey = settingsStore((s) => s.koeiromapKey)
-  const elevenlabsApiKey = settingsStore((s) => s.elevenlabsApiKey)
+  const koeiromapKey = settingsStore((s) => s.koeiromapKey);
+  const elevenlabsApiKey = settingsStore((s) => s.elevenlabsApiKey);
 
-  const realtimeAPIMode = settingsStore((s) => s.realtimeAPIMode)
-  const audioMode = settingsStore((s) => s.audioMode)
+  const realtimeAPIMode = settingsStore((s) => s.realtimeAPIMode);
+  const audioMode = settingsStore((s) => s.audioMode);
 
-  const selectVoice = settingsStore((s) => s.selectVoice)
-  const koeiroParam = settingsStore((s) => s.koeiroParam)
-  const googleTtsType = settingsStore((s) => s.googleTtsType)
-  const voicevoxSpeaker = settingsStore((s) => s.voicevoxSpeaker)
-  const voicevoxSpeed = settingsStore((s) => s.voicevoxSpeed)
-  const voicevoxPitch = settingsStore((s) => s.voicevoxPitch)
-  const voicevoxIntonation = settingsStore((s) => s.voicevoxIntonation)
-  const voicevoxServerUrl = settingsStore((s) => s.voicevoxServerUrl)
-  const aivisSpeechSpeaker = settingsStore((s) => s.aivisSpeechSpeaker)
-  const aivisSpeechSpeed = settingsStore((s) => s.aivisSpeechSpeed)
-  const aivisSpeechPitch = settingsStore((s) => s.aivisSpeechPitch)
-  const aivisSpeechIntonation = settingsStore((s) => s.aivisSpeechIntonation)
-  const aivisSpeechServerUrl = settingsStore((s) => s.aivisSpeechServerUrl)
+  const selectVoice = settingsStore((s) => s.selectVoice);
+  const koeiroParam = settingsStore((s) => s.koeiroParam);
+  const googleTtsType = settingsStore((s) => s.googleTtsType);
+  const voicevoxSpeaker = settingsStore((s) => s.voicevoxSpeaker);
+  const voicevoxSpeed = settingsStore((s) => s.voicevoxSpeed);
+  const voicevoxPitch = settingsStore((s) => s.voicevoxPitch);
+  const voicevoxIntonation = settingsStore((s) => s.voicevoxIntonation);
+  const voicevoxServerUrl = settingsStore((s) => s.voicevoxServerUrl);
+  const aivisSpeechSpeaker = settingsStore((s) => s.aivisSpeechSpeaker);
+  const aivisSpeechSpeed = settingsStore((s) => s.aivisSpeechSpeed);
+  const aivisSpeechPitch = settingsStore((s) => s.aivisSpeechPitch);
+  const aivisSpeechIntonation = settingsStore((s) => s.aivisSpeechIntonation);
+  const aivisSpeechServerUrl = settingsStore((s) => s.aivisSpeechServerUrl);
   const stylebertvits2ServerUrl = settingsStore(
     (s) => s.stylebertvits2ServerUrl
-  )
-  const stylebertvits2ApiKey = settingsStore((s) => s.stylebertvits2ApiKey)
-  const stylebertvits2ModelId = settingsStore((s) => s.stylebertvits2ModelId)
-  const stylebertvits2Style = settingsStore((s) => s.stylebertvits2Style)
-  const stylebertvits2SdpRatio = settingsStore((s) => s.stylebertvits2SdpRatio)
-  const stylebertvits2Length = settingsStore((s) => s.stylebertvits2Length)
-  const gsviTtsServerUrl = settingsStore((s) => s.gsviTtsServerUrl)
-  const gsviTtsModelId = settingsStore((s) => s.gsviTtsModelId)
-  const gsviTtsBatchSize = settingsStore((s) => s.gsviTtsBatchSize)
-  const gsviTtsSpeechRate = settingsStore((s) => s.gsviTtsSpeechRate)
-  const elevenlabsVoiceId = settingsStore((s) => s.elevenlabsVoiceId)
-  const openaiTTSKey = settingsStore((s) => s.openaiTTSKey)
-  const openaiTTSVoice = settingsStore((s) => s.openaiTTSVoice)
-  const openaiTTSModel = settingsStore((s) => s.openaiTTSModel)
-  const openaiTTSSpeed = settingsStore((s) => s.openaiTTSSpeed)
-  const azureTTSKey = settingsStore((s) => s.azureTTSKey)
-  const azureTTSEndpoint = settingsStore((s) => s.azureTTSEndpoint)
-  const nijivoiceApiKey = settingsStore((s) => s.nijivoiceApiKey)
-  const nijivoiceActorId = settingsStore((s) => s.nijivoiceActorId)
-  const nijivoiceSpeed = settingsStore((s) => s.nijivoiceSpeed)
+  );
+  const stylebertvits2ApiKey = settingsStore((s) => s.stylebertvits2ApiKey);
+  const stylebertvits2ModelId = settingsStore((s) => s.stylebertvits2ModelId);
+  const stylebertvits2Style = settingsStore((s) => s.stylebertvits2Style);
+  const stylebertvits2SdpRatio = settingsStore((s) => s.stylebertvits2SdpRatio);
+  const stylebertvits2Length = settingsStore((s) => s.stylebertvits2Length);
+  const gsviTtsServerUrl = settingsStore((s) => s.gsviTtsServerUrl);
+  const gsviTtsModelId = settingsStore((s) => s.gsviTtsModelId);
+  const gsviTtsBatchSize = settingsStore((s) => s.gsviTtsBatchSize);
+  const gsviTtsSpeechRate = settingsStore((s) => s.gsviTtsSpeechRate);
+  const elevenlabsVoiceId = settingsStore((s) => s.elevenlabsVoiceId);
+  const openaiTTSKey = settingsStore((s) => s.openaiTTSKey);
+  const openaiTTSVoice = settingsStore((s) => s.openaiTTSVoice);
+  const openaiTTSModel = settingsStore((s) => s.openaiTTSModel);
+  const openaiTTSSpeed = settingsStore((s) => s.openaiTTSSpeed);
+  const azureTTSKey = settingsStore((s) => s.azureTTSKey);
+  const azureTTSEndpoint = settingsStore((s) => s.azureTTSEndpoint);
+  const nijivoiceApiKey = settingsStore((s) => s.nijivoiceApiKey);
+  const nijivoiceActorId = settingsStore((s) => s.nijivoiceActorId);
+  const nijivoiceSpeed = settingsStore((s) => s.nijivoiceSpeed);
   const nijivoiceEmotionalLevel = settingsStore(
     (s) => s.nijivoiceEmotionalLevel
-  )
-  const nijivoiceSoundDuration = settingsStore((s) => s.nijivoiceSoundDuration)
+  );
+  const nijivoiceSoundDuration = settingsStore((s) => s.nijivoiceSoundDuration);
 
-  const { t } = useTranslation()
-  const [nijivoiceSpeakers, setNijivoiceSpeakers] = useState<Array<any>>([])
-  const [prevNijivoiceActorId, setPrevNijivoiceActorId] = useState<string>('')
+  const { t } = useTranslation();
+  const [nijivoiceSpeakers, setNijivoiceSpeakers] = useState<Array<any>>([]);
+  const [prevNijivoiceActorId, setPrevNijivoiceActorId] = useState<string>('');
 
   // にじボイスの話者一覧を取得する関数
   const fetchNijivoiceSpeakers = async () => {
     try {
       const response = await fetch(
         `/api/get-nijivoice-actors?apiKey=${nijivoiceApiKey}`
-      )
-      const data = await response.json()
+      );
+      const data = await response.json();
       if (data.voiceActors) {
         const sortedActors = data.voiceActors.sort(
           (a: any, b: any) => a.id - b.id
-        )
-        setNijivoiceSpeakers(sortedActors)
+        );
+        setNijivoiceSpeakers(sortedActors);
       }
     } catch (error) {
-      console.error('Failed to fetch nijivoice speakers:', error)
+      console.error('Failed to fetch nijivoice speakers:', error);
     }
-  }
+  };
 
   // コンポーネントマウント時またはにじボイス選択時に話者一覧を取得
   useEffect(() => {
     if (selectVoice === 'nijivoice') {
-      fetchNijivoiceSpeakers()
+      fetchNijivoiceSpeakers();
     }
-  }, [selectVoice, nijivoiceApiKey])
+  }, [selectVoice, nijivoiceApiKey]);
 
   // nijivoiceActorIdが変更された時にrecommendedVoiceSpeedを設定する処理を追加
   useEffect(() => {
@@ -106,19 +106,19 @@ const Voice = () => {
       // 現在選択されてい���キャラクターを探す
       const selectedActor = nijivoiceSpeakers.find(
         (actor) => actor.id === nijivoiceActorId
-      )
+      );
 
       // キャラクターが見つかり、recommendedVoiceSpeedが設定されている場合
       if (selectedActor?.recommendedVoiceSpeed) {
         settingsStore.setState({
           nijivoiceSpeed: selectedActor.recommendedVoiceSpeed,
-        })
+        });
       }
 
       // 前回の選択を更新
-      setPrevNijivoiceActorId(nijivoiceActorId)
+      setPrevNijivoiceActorId(nijivoiceActorId);
     }
-  }, [nijivoiceActorId, nijivoiceSpeakers, prevNijivoiceActorId, selectVoice])
+  }, [nijivoiceActorId, nijivoiceSpeakers, prevNijivoiceActorId, selectVoice]);
 
   // 追加: realtimeAPIMode または audioMode が true の場合にメッセージを表示
   if (realtimeAPIMode || audioMode) {
@@ -126,7 +126,7 @@ const Voice = () => {
       <div className="text-center typography-20 whitespace-pre-line">
         {t('CannotUseVoice')}
       </div>
-    )
+    );
   }
 
   return (
@@ -249,7 +249,7 @@ const Voice = () => {
                           speakerX: Number(e.target.value),
                           speakerY: koeiroParam.speakerY,
                         },
-                      })
+                      });
                     }}
                   ></input>
                   <div className="select-none">y : {koeiroParam.speakerY}</div>
@@ -266,12 +266,12 @@ const Voice = () => {
                           speakerX: koeiroParam.speakerX,
                           speakerY: Number(e.target.value),
                         },
-                      })
+                      });
                     }}
                   ></input>
                 </div>
               </>
-            )
+            );
           } else if (selectVoice === 'voicevox') {
             return (
               <>
@@ -333,7 +333,7 @@ const Voice = () => {
                     onChange={(e) => {
                       settingsStore.setState({
                         voicevoxSpeed: Number(e.target.value),
-                      })
+                      });
                     }}
                   ></input>
                   <div className="select-none">
@@ -349,7 +349,7 @@ const Voice = () => {
                     onChange={(e) => {
                       settingsStore.setState({
                         voicevoxPitch: Number(e.target.value),
-                      })
+                      });
                     }}
                   ></input>
                   <div className="select-none">
@@ -365,12 +365,12 @@ const Voice = () => {
                     onChange={(e) => {
                       settingsStore.setState({
                         voicevoxIntonation: Number(e.target.value),
-                      })
+                      });
                     }}
                   ></input>
                 </div>
               </>
-            )
+            );
           } else if (selectVoice === 'google') {
             return (
               <>
@@ -404,7 +404,7 @@ const Voice = () => {
                   />
                 </div>
               </>
-            )
+            );
           } else if (selectVoice === 'stylebertvits2') {
             return (
               <>
@@ -495,7 +495,7 @@ const Voice = () => {
                   onChange={(e) => {
                     settingsStore.setState({
                       stylebertvits2SdpRatio: Number(e.target.value),
-                    })
+                    });
                   }}
                 ></input>
                 <div className="mt-16 font-bold">
@@ -511,11 +511,11 @@ const Voice = () => {
                   onChange={(e) => {
                     settingsStore.setState({
                       stylebertvits2Length: Number(e.target.value),
-                    })
+                    });
                   }}
                 ></input>
               </>
-            )
+            );
           } else if (selectVoice === 'aivis_speech') {
             return (
               <>
@@ -569,20 +569,22 @@ const Voice = () => {
                   </TextButton>
                   <TextButton
                     onClick={async () => {
-                      const response = await fetch('/api/update-aivis-speakers')
+                      const response = await fetch(
+                        '/api/update-aivis-speakers'
+                      );
                       if (response.ok) {
                         // 話者リストを再読み込み
                         const updatedSpeakersResponse = await fetch(
                           '/speakers_aivis.json'
-                        )
+                        );
                         const updatedSpeakers =
-                          await updatedSpeakersResponse.json()
+                          await updatedSpeakersResponse.json();
                         // speakers_aivisを更新
                         speakers_aivis.splice(
                           0,
                           speakers_aivis.length,
                           ...updatedSpeakers
-                        )
+                        );
                       }
                     }}
                     className="ml-16"
@@ -604,7 +606,7 @@ const Voice = () => {
                     onChange={(e) => {
                       settingsStore.setState({
                         aivisSpeechSpeed: Number(e.target.value),
-                      })
+                      });
                     }}
                   ></input>
                   <div className="select-none">
@@ -620,7 +622,7 @@ const Voice = () => {
                     onChange={(e) => {
                       settingsStore.setState({
                         aivisSpeechPitch: Number(e.target.value),
-                      })
+                      });
                     }}
                   ></input>
                   <div className="select-none">
@@ -636,12 +638,12 @@ const Voice = () => {
                     onChange={(e) => {
                       settingsStore.setState({
                         aivisSpeechIntonation: Number(e.target.value),
-                      })
+                      });
                     }}
                   ></input>
                 </div>
               </>
-            )
+            );
           } else if (selectVoice === 'gsvitts') {
             return (
               <>
@@ -703,7 +705,7 @@ const Voice = () => {
                   />
                 </div>
               </>
-            )
+            );
           } else if (selectVoice === 'elevenlabs') {
             return (
               <>
@@ -754,7 +756,7 @@ const Voice = () => {
                   />
                 </div>
               </>
-            )
+            );
           } else if (selectVoice === 'openai') {
             return (
               <>
@@ -820,11 +822,11 @@ const Voice = () => {
                   onChange={(e) => {
                     settingsStore.setState({
                       openaiTTSSpeed: Number(e.target.value),
-                    })
+                    });
                   }}
                 />
               </>
-            )
+            );
           } else if (selectVoice === 'azure') {
             return (
               <>
@@ -890,11 +892,11 @@ const Voice = () => {
                   onChange={(e) => {
                     settingsStore.setState({
                       openaiTTSSpeed: Number(e.target.value),
-                    })
+                    });
                   }}
                 />
               </>
-            )
+            );
           } else if (selectVoice === 'nijivoice') {
             return (
               <>
@@ -924,7 +926,7 @@ const Voice = () => {
                     onChange={(e) => {
                       settingsStore.setState({
                         nijivoiceActorId: e.target.value,
-                      })
+                      });
                     }}
                     className="px-16 py-8 bg-surface1 hover:bg-surface1-hover rounded-8"
                   >
@@ -949,7 +951,7 @@ const Voice = () => {
                   onChange={(e) => {
                     settingsStore.setState({
                       nijivoiceSpeed: Number(e.target.value),
-                    })
+                    });
                   }}
                 />
                 <div className="mt-16 font-bold">
@@ -965,7 +967,7 @@ const Voice = () => {
                   onChange={(e) => {
                     settingsStore.setState({
                       nijivoiceEmotionalLevel: Number(e.target.value),
-                    })
+                    });
                   }}
                 />
                 <div className="mt-16 font-bold">
@@ -981,15 +983,15 @@ const Voice = () => {
                   onChange={(e) => {
                     settingsStore.setState({
                       nijivoiceSoundDuration: Number(e.target.value),
-                    })
+                    });
                   }}
                 />
               </>
-            )
+            );
           }
         })()}
       </div>
     </div>
-  )
-}
-export default Voice
+  );
+};
+export default Voice;

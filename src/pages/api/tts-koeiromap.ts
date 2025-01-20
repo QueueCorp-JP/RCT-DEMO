@@ -1,16 +1,16 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import axios from 'axios'
+import type { NextApiRequest, NextApiResponse } from 'next';
+import axios from 'axios';
 
 type Data = {
-  audio?: Uint8Array
-  error?: string
-}
+  audio?: Uint8Array;
+  error?: string;
+};
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { message, speakerX, speakerY, style, apiKey } = req.body
+  const { message, speakerX, speakerY, style, apiKey } = req.body;
 
   try {
     const response = await axios.post(
@@ -29,12 +29,12 @@ export default async function handler(
           'Ocp-Apim-Subscription-Key': apiKey,
         },
       }
-    )
+    );
 
-    const audio = response.data.audio
-    res.status(200).json({ audio })
+    const audio = response.data.audio;
+    res.status(200).json({ audio });
   } catch (error) {
-    console.error('Error in Koeiromap TTS:', error)
-    res.status(500).json({ error: 'Internal Server Error' })
+    console.error('Error in Koeiromap TTS:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 }

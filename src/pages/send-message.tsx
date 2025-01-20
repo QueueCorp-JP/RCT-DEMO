@@ -1,76 +1,76 @@
-import { useState, KeyboardEvent, useEffect } from 'react'
-import { IconButton } from '@/components/iconButton'
-import settingsStore from '@/features/stores/settings'
-import { useTranslation } from 'react-i18next'
+import { useState, KeyboardEvent, useEffect } from 'react';
+import { IconButton } from '@/components/iconButton';
+import settingsStore from '@/features/stores/settings';
+import { useTranslation } from 'react-i18next';
 
-type SendType = 'direct_send' | 'ai_generate' | 'user_input'
+type SendType = 'direct_send' | 'ai_generate' | 'user_input';
 
 interface RequestBody {
-  messages: string[]
-  systemPrompt?: string
-  useCurrentSystemPrompt: boolean
+  messages: string[];
+  systemPrompt?: string;
+  useCurrentSystemPrompt: boolean;
 }
 
 const SendMessage = () => {
-  const [directMessages, setDirectMessages] = useState(Array(1).fill(''))
-  const [aiMessages, setAiMessages] = useState(Array(1).fill(''))
-  const [directFieldCount, setDirectFieldCount] = useState(1)
-  const [aiFieldCount, setAiFieldCount] = useState(1)
-  const [userInputMessages, setUserInputMessages] = useState(Array(1).fill(''))
-  const [userInputFieldCount, setUserInputFieldCount] = useState(1)
-  const [clientId, setClientId] = useState('')
-  const [directResponse, setDirectResponse] = useState('')
-  const [aiResponse, setAiResponse] = useState('')
-  const [userInputResponse, setUserInputResponse] = useState('')
-  const [copySuccess, setCopySuccess] = useState<string>('')
+  const [directMessages, setDirectMessages] = useState(Array(1).fill(''));
+  const [aiMessages, setAiMessages] = useState(Array(1).fill(''));
+  const [directFieldCount, setDirectFieldCount] = useState(1);
+  const [aiFieldCount, setAiFieldCount] = useState(1);
+  const [userInputMessages, setUserInputMessages] = useState(Array(1).fill(''));
+  const [userInputFieldCount, setUserInputFieldCount] = useState(1);
+  const [clientId, setClientId] = useState('');
+  const [directResponse, setDirectResponse] = useState('');
+  const [aiResponse, setAiResponse] = useState('');
+  const [userInputResponse, setUserInputResponse] = useState('');
+  const [copySuccess, setCopySuccess] = useState<string>('');
   const [popupPosition, setPopupPosition] = useState<{
-    x: number
-    y: number
-  } | null>(null)
-  const [systemPrompt, setSystemPrompt] = useState('')
-  const [useCurrentSystemPrompt, setUseCurrentSystemPrompt] = useState(false)
-  const [baseUrl, setBaseUrl] = useState('')
-  const { t } = useTranslation()
+    x: number;
+    y: number;
+  } | null>(null);
+  const [systemPrompt, setSystemPrompt] = useState('');
+  const [useCurrentSystemPrompt, setUseCurrentSystemPrompt] = useState(false);
+  const [baseUrl, setBaseUrl] = useState('');
+  const { t } = useTranslation();
 
   useEffect(() => {
-    const storedClientId = settingsStore.getState().clientId
+    const storedClientId = settingsStore.getState().clientId;
     if (storedClientId) {
-      setClientId(storedClientId)
+      setClientId(storedClientId);
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    setBaseUrl(window.location.origin)
-  }, [])
+    setBaseUrl(window.location.origin);
+  }, []);
 
   const handleSubmit = async (
     e?: React.FormEvent,
     type: SendType = 'direct_send'
   ) => {
-    e?.preventDefault()
+    e?.preventDefault();
     const messages = (() => {
       switch (type) {
         case 'direct_send':
-          return directMessages
+          return directMessages;
         case 'ai_generate':
-          return aiMessages
+          return aiMessages;
         case 'user_input':
-          return userInputMessages
+          return userInputMessages;
         default:
-          return directMessages
+          return directMessages;
       }
-    })()
-    if (!messages.some((msg) => msg.trim()) || !clientId.trim()) return
+    })();
+    if (!messages.some((msg) => msg.trim()) || !clientId.trim()) return;
 
-    const url = new URL('/api/messages', window.location.origin)
-    url.searchParams.append('clientId', clientId.trim())
-    url.searchParams.append('type', type)
+    const url = new URL('/api/messages', window.location.origin);
+    url.searchParams.append('clientId', clientId.trim());
+    url.searchParams.append('type', type);
 
     const body: RequestBody = {
       messages: messages.filter((msg) => msg.trim()),
       useCurrentSystemPrompt: useCurrentSystemPrompt,
       ...(useCurrentSystemPrompt ? {} : { systemPrompt: systemPrompt }),
-    }
+    };
 
     try {
       const res = await fetch(url, {
@@ -79,103 +79,103 @@ const SendMessage = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(body),
-      })
+      });
 
       if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`)
+        throw new Error(`HTTP error! status: ${res.status}`);
       }
 
-      const contentType = res.headers.get('content-type')
+      const contentType = res.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
-        throw new Error("Oops! We haven't received a JSON response")
+        throw new Error("Oops! We haven't received a JSON response");
       }
 
-      const data = await res.json()
+      const data = await res.json();
       switch (type) {
         case 'direct_send':
-          setDirectResponse(JSON.stringify(data, null, 2))
-          setDirectMessages(Array(1).fill(''))
-          setDirectFieldCount(1)
-          break
+          setDirectResponse(JSON.stringify(data, null, 2));
+          setDirectMessages(Array(1).fill(''));
+          setDirectFieldCount(1);
+          break;
         case 'ai_generate':
-          setAiResponse(JSON.stringify(data, null, 2))
-          setAiMessages(Array(1).fill(''))
-          setAiFieldCount(1)
-          break
+          setAiResponse(JSON.stringify(data, null, 2));
+          setAiMessages(Array(1).fill(''));
+          setAiFieldCount(1);
+          break;
         case 'user_input':
-          setUserInputResponse(JSON.stringify(data, null, 2))
-          setUserInputMessages(Array(1).fill(''))
-          setUserInputFieldCount(1)
-          break
+          setUserInputResponse(JSON.stringify(data, null, 2));
+          setUserInputMessages(Array(1).fill(''));
+          setUserInputFieldCount(1);
+          break;
       }
     } catch (error) {
-      console.error('Error:', error)
-      const errorMessage = `エラーが発生しました: ${error instanceof Error ? error.message : String(error)}`
+      console.error('Error:', error);
+      const errorMessage = `エラーが発生しました: ${error instanceof Error ? error.message : String(error)}`;
       switch (type) {
         case 'direct_send':
-          setDirectResponse(errorMessage)
-          break
+          setDirectResponse(errorMessage);
+          break;
         case 'ai_generate':
-          setAiResponse(errorMessage)
-          break
+          setAiResponse(errorMessage);
+          break;
         case 'user_input':
-          setUserInputResponse(errorMessage)
-          break
+          setUserInputResponse(errorMessage);
+          break;
       }
     }
-  }
+  };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
-      e.preventDefault()
+      e.preventDefault();
 
       const formType = (e.target as HTMLTextAreaElement).getAttribute(
         'data-form-type'
-      ) as SendType
-      handleSubmit(undefined, formType)
+      ) as SendType;
+      handleSubmit(undefined, formType);
     }
-  }
+  };
 
   const addNewField = (type: SendType) => {
     if (type === 'direct_send') {
-      setDirectFieldCount((prev) => prev + 1)
+      setDirectFieldCount((prev) => prev + 1);
     } else if (type === 'ai_generate') {
-      setAiFieldCount((prev) => prev + 1)
+      setAiFieldCount((prev) => prev + 1);
     } else if (type === 'user_input') {
-      setUserInputFieldCount((prev) => prev + 1)
+      setUserInputFieldCount((prev) => prev + 1);
     }
-  }
+  };
 
   const removeField = (index: number, type: SendType) => {
     if (type === 'direct_send') {
-      if (directFieldCount <= 1) return
-      setDirectFieldCount((prev) => prev - 1)
-      setDirectMessages((prev) => prev.filter((_, i) => i !== index))
+      if (directFieldCount <= 1) return;
+      setDirectFieldCount((prev) => prev - 1);
+      setDirectMessages((prev) => prev.filter((_, i) => i !== index));
     } else if (type === 'ai_generate') {
-      if (aiFieldCount <= 1) return
-      setAiFieldCount((prev) => prev - 1)
-      setAiMessages((prev) => prev.filter((_, i) => i !== index))
+      if (aiFieldCount <= 1) return;
+      setAiFieldCount((prev) => prev - 1);
+      setAiMessages((prev) => prev.filter((_, i) => i !== index));
     } else if (type === 'user_input') {
-      if (userInputFieldCount <= 1) return
-      setUserInputFieldCount((prev) => prev - 1)
-      setUserInputMessages((prev) => prev.filter((_, i) => i !== index))
+      if (userInputFieldCount <= 1) return;
+      setUserInputFieldCount((prev) => prev - 1);
+      setUserInputMessages((prev) => prev.filter((_, i) => i !== index));
     }
-  }
+  };
 
   const copyToClipboard = async (text: string, event: React.MouseEvent) => {
     try {
-      await navigator.clipboard.writeText(text)
-      const rect = (event.target as HTMLElement).getBoundingClientRect()
-      setPopupPosition({ x: rect.right, y: rect.top })
-      setCopySuccess(`Copied!`)
+      await navigator.clipboard.writeText(text);
+      const rect = (event.target as HTMLElement).getBoundingClientRect();
+      setPopupPosition({ x: rect.right, y: rect.top });
+      setCopySuccess(`Copied!`);
       setTimeout(() => {
-        setCopySuccess('')
-        setPopupPosition(null)
-      }, 2000)
+        setCopySuccess('');
+        setPopupPosition(null);
+      }, 2000);
     } catch (err) {
-      console.error('Failed to copy text: ', err)
+      console.error('Failed to copy text: ', err);
     }
-  }
+  };
 
   return (
     <div className="flex flex-col items-center text-black min-h-screen bg-background2">
@@ -248,9 +248,9 @@ const SendMessage = () => {
                       value={directMessages[index]}
                       data-form-type="direct_send"
                       onChange={(e) => {
-                        const newMessages = [...directMessages]
-                        newMessages[index] = e.target.value
-                        setDirectMessages(newMessages)
+                        const newMessages = [...directMessages];
+                        newMessages[index] = e.target.value;
+                        setDirectMessages(newMessages);
                       }}
                       onKeyDown={(e) => handleKeyDown(e)}
                       className="bg-surface1 hover:bg-surface1-hover focus:bg-surface1 rounded-16 w-full px-16 text-text-primary typography-16 font-bold"
@@ -380,9 +380,9 @@ const SendMessage = () => {
                       value={aiMessages[index]}
                       data-form-type="ai_generate"
                       onChange={(e) => {
-                        const newMessages = [...aiMessages]
-                        newMessages[index] = e.target.value
-                        setAiMessages(newMessages)
+                        const newMessages = [...aiMessages];
+                        newMessages[index] = e.target.value;
+                        setAiMessages(newMessages);
                       }}
                       onKeyDown={(e) => handleKeyDown(e)}
                       className="bg-surface1 hover:bg-surface1-hover focus:bg-surface1 rounded-16 w-full px-16 text-text-primary typography-16 font-bold"
@@ -481,9 +481,9 @@ const SendMessage = () => {
                       value={userInputMessages[index]}
                       data-form-type="user_input"
                       onChange={(e) => {
-                        const newMessages = [...userInputMessages]
-                        newMessages[index] = e.target.value
-                        setUserInputMessages(newMessages)
+                        const newMessages = [...userInputMessages];
+                        newMessages[index] = e.target.value;
+                        setUserInputMessages(newMessages);
                       }}
                       onKeyDown={(e) => handleKeyDown(e)}
                       className="bg-surface1 hover:bg-surface1-hover focus:bg-surface1 rounded-16 w-full px-16 text-text-primary typography-16 font-bold"
@@ -551,7 +551,7 @@ const SendMessage = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default SendMessage
+export default SendMessage;

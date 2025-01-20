@@ -1,7 +1,7 @@
-import homeStore from '@/features/stores/home'
+import homeStore from '@/features/stores/home';
 
 export const SlideText = () => {
-  const slideMessages = homeStore((s) => s.slideMessages)
+  const slideMessages = homeStore((s) => s.slideMessages);
   return (
     <div className="bg-white absolute bottom-0 z-20 w-screen p-8">
       <div className="mx-auto max-w-[80vw] p-16 text-center">
@@ -10,5 +10,5 @@ export const SlideText = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};

@@ -1,6 +1,6 @@
-import AdvancedSettings from './advancedSettings'
-import MessageReceiverSetting from './messageReceiver'
-import Log from './log'
+import AdvancedSettings from './advancedSettings';
+import MessageReceiverSetting from './messageReceiver';
+import Log from './log';
 
 const Other = () => {
   return (
@@ -9,6 +9,6 @@ const Other = () => {
       <MessageReceiverSetting />
       <Log />
     </>
-  )
-}
-export default Other
+  );
+};
+export default Other;

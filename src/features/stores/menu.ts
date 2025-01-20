@@ -1,11 +1,11 @@
-import { create } from 'zustand'
+import { create } from 'zustand';
 
 interface MenuState {
-  showWebcam: boolean
-  showCapture: boolean
-  fileInput: HTMLInputElement | null
-  bgFileInput: HTMLInputElement | null
-  slideVisible: boolean
+  showWebcam: boolean;
+  showCapture: boolean;
+  fileInput: HTMLInputElement | null;
+  bgFileInput: HTMLInputElement | null;
+  slideVisible: boolean;
 }
 
 const menuStore = create<MenuState>((set, get) => ({
@@ -14,5 +14,5 @@ const menuStore = create<MenuState>((set, get) => ({
   fileInput: null,
   bgFileInput: null,
   slideVisible: true,
-}))
-export default menuStore
+}));
+export default menuStore;

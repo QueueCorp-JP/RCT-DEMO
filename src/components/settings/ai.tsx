@@ -1,5 +1,5 @@
-import ExternalLinkage from './externalLinkage'
-import ModelProvider from './modelProvider'
+import ExternalLinkage from './externalLinkage';
+import ModelProvider from './modelProvider';
 
 const AI = () => {
   return (
@@ -7,6 +7,6 @@ const AI = () => {
       <ExternalLinkage />
       <ModelProvider />
     </>
-  )
-}
-export default AI
+  );
+};
+export default AI;

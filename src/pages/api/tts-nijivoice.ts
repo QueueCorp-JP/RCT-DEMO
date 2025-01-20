@@ -1,21 +1,21 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
-import axios from 'axios'
+import type { NextApiRequest, NextApiResponse } from 'next';
+import axios from 'axios';
 
 type Data = {
-  audio?: ArrayBuffer
-  error?: string
-}
+  audio?: ArrayBuffer;
+  error?: string;
+};
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
   const { script, speed, voiceActorId, apiKey, emotionalLevel, soundDuration } =
-    req.body
+    req.body;
 
-  const nijivoiceApiKey = apiKey || process.env.NIJIVOICE_API_KEY
+  const nijivoiceApiKey = apiKey || process.env.NIJIVOICE_API_KEY;
   if (!nijivoiceApiKey) {
-    return res.status(400).json({ error: 'API key is required' })
+    return res.status(400).json({ error: 'API key is required' });
   }
 
   try {
@@ -35,19 +35,19 @@ export default async function handler(
         },
         timeout: 30000,
       }
-    )
+    );
 
-    const audioUrl = response.data.generatedVoice.audioFileUrl
+    const audioUrl = response.data.generatedVoice.audioFileUrl;
 
     const audioResponse = await axios.get(audioUrl, {
       responseType: 'stream',
       timeout: 30000,
-    })
+    });
 
-    res.setHeader('Content-Type', 'audio/mpeg')
-    audioResponse.data.pipe(res)
+    res.setHeader('Content-Type', 'audio/mpeg');
+    audioResponse.data.pipe(res);
   } catch (error) {
-    console.error('Error in Nijivoice TTS:', error)
-    res.status(500).json({ error: 'Internal Server Error' })
+    console.error('Error in Nijivoice TTS:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 }

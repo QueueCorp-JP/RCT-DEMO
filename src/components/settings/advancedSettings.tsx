@@ -1,24 +1,24 @@
-import { Disclosure } from '@headlessui/react'
-import { ChevronUpIcon } from '@heroicons/react/24/solid'
-import { useTranslation } from 'react-i18next'
+import { Disclosure } from '@headlessui/react';
+import { ChevronUpIcon } from '@heroicons/react/24/solid';
+import { useTranslation } from 'react-i18next';
 
-import menuStore from '@/features/stores/menu'
-import settingsStore from '@/features/stores/settings'
-import { TextButton } from '../textButton'
+import menuStore from '@/features/stores/menu';
+import settingsStore from '@/features/stores/settings';
+import { TextButton } from '../textButton';
 
 const AdvancedSettings = () => {
-  const selectLanguage = settingsStore((s) => s.selectLanguage)
+  const selectLanguage = settingsStore((s) => s.selectLanguage);
   const changeEnglishToJapanese = settingsStore(
     (s) => s.changeEnglishToJapanese
-  )
-  const showControlPanel = settingsStore((s) => s.showControlPanel)
+  );
+  const showControlPanel = settingsStore((s) => s.showControlPanel);
   const includeTimestampInUserMessage = settingsStore(
     (s) => s.includeTimestampInUserMessage
-  )
-  const showAssistantText = settingsStore((s) => s.showAssistantText)
-  const showCharacterName = settingsStore((s) => s.showCharacterName)
+  );
+  const showAssistantText = settingsStore((s) => s.showAssistantText);
+  const showCharacterName = settingsStore((s) => s.showCharacterName);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <div className="mb-40">
@@ -29,8 +29,8 @@ const AdvancedSettings = () => {
         <div className="my-16 typography-16">{t('LocalStorageResetInfo')}</div>
         <TextButton
           onClick={() => {
-            settingsStore.persist.clearStorage()
-            window.location.reload()
+            settingsStore.persist.clearStorage();
+            window.location.reload();
           }}
         >
           {t('LocalStorageResetButton')}
@@ -123,6 +123,6 @@ const AdvancedSettings = () => {
         </div>
       </div>
     </div>
-  )
-}
-export default AdvancedSettings
+  );
+};
+export default AdvancedSettings;

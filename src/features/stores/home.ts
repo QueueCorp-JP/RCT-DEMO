@@ -1,38 +1,38 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-import { Message } from '@/features/messages/messages'
-import { Viewer } from '../vrmViewer/viewer'
-import { messageSelectors } from '../messages/messageSelectors'
-import { Live2DModel } from 'pixi-live2d-display-lipsyncpatch'
+import { Message } from '@/features/messages/messages';
+import { Viewer } from '../vrmViewer/viewer';
+import { messageSelectors } from '../messages/messageSelectors';
+import { Live2DModel } from 'pixi-live2d-display-lipsyncpatch';
 
 export interface PersistedState {
-  userOnboarded: boolean
-  chatLog: Message[]
-  showIntroduction: boolean
+  userOnboarded: boolean;
+  chatLog: Message[];
+  showIntroduction: boolean;
 }
 
 export interface TransientState {
-  viewer: Viewer
-  live2dViewer: any
-  assistantMessage: string
-  slideMessages: string[]
-  chatProcessing: boolean
-  chatProcessingCount: number
-  incrementChatProcessingCount: () => void
-  decrementChatProcessingCount: () => void
-  backgroundImageUrl: string
-  modalImage: string
-  triggerShutter: boolean
-  webcamStatus: boolean
-  captureStatus: boolean
-  isCubismCoreLoaded: boolean
-  setIsCubismCoreLoaded: (loaded: boolean) => void
-  isLive2dLoaded: boolean
-  setIsLive2dLoaded: (loaded: boolean) => void
+  viewer: Viewer;
+  live2dViewer: any;
+  assistantMessage: string;
+  slideMessages: string[];
+  chatProcessing: boolean;
+  chatProcessingCount: number;
+  incrementChatProcessingCount: () => void;
+  decrementChatProcessingCount: () => void;
+  backgroundImageUrl: string;
+  modalImage: string;
+  triggerShutter: boolean;
+  webcamStatus: boolean;
+  captureStatus: boolean;
+  isCubismCoreLoaded: boolean;
+  setIsCubismCoreLoaded: (loaded: boolean) => void;
+  isLive2dLoaded: boolean;
+  setIsLive2dLoaded: (loaded: boolean) => void;
 }
 
-export type HomeState = PersistedState & TransientState
+export type HomeState = PersistedState & TransientState;
 
 const homeStore = create<HomeState>()(
   persist(
@@ -52,12 +52,12 @@ const homeStore = create<HomeState>()(
       incrementChatProcessingCount: () => {
         set(({ chatProcessingCount }) => ({
           chatProcessingCount: chatProcessingCount + 1,
-        }))
+        }));
       },
       decrementChatProcessingCount: () => {
         set(({ chatProcessingCount }) => ({
           chatProcessingCount: chatProcessingCount - 1,
-        }))
+        }));
       },
       backgroundImageUrl:
         process.env.NEXT_PUBLIC_BACKGROUND_IMAGE_PATH ?? '/bg-c.png',
@@ -79,7 +79,7 @@ const homeStore = create<HomeState>()(
       }),
     }
   )
-)
+);
 
 // chatLogの変更を監視して保存
 homeStore.subscribe((state, prevState) => {
@@ -93,8 +93,8 @@ homeStore.subscribe((state, prevState) => {
         messages: state.chatLog,
         isNewFile: prevState.chatLog.length === 0,
       }),
-    }).catch((error) => console.error('Error saving chat log:', error))
+    }).catch((error) => console.error('Error saving chat log:', error));
   }
-})
+});
 
-export default homeStore
+export default homeStore;

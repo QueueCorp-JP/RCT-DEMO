@@ -1,38 +1,38 @@
-import { useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next';
 
-import homeStore from '@/features/stores/home'
-import menuStore from '@/features/stores/menu'
-import settingsStore from '@/features/stores/settings'
-import slideStore from '@/features/stores/slide'
-import { TextButton } from '../textButton'
-import { multiModalAIServices } from '@/features/stores/settings'
+import homeStore from '@/features/stores/home';
+import menuStore from '@/features/stores/menu';
+import settingsStore from '@/features/stores/settings';
+import slideStore from '@/features/stores/slide';
+import { TextButton } from '../textButton';
+import { multiModalAIServices } from '@/features/stores/settings';
 
 const YouTube = () => {
-  const youtubeApiKey = settingsStore((s) => s.youtubeApiKey)
-  const youtubeMode = settingsStore((s) => s.youtubeMode)
-  const youtubeLiveId = settingsStore((s) => s.youtubeLiveId)
-  const externalLinkageMode = settingsStore((s) => s.externalLinkageMode)
-  const selectAIService = settingsStore((s) => s.selectAIService)
+  const youtubeApiKey = settingsStore((s) => s.youtubeApiKey);
+  const youtubeMode = settingsStore((s) => s.youtubeMode);
+  const youtubeLiveId = settingsStore((s) => s.youtubeLiveId);
+  const externalLinkageMode = settingsStore((s) => s.externalLinkageMode);
+  const selectAIService = settingsStore((s) => s.selectAIService);
 
   const conversationContinuityMode = settingsStore(
     (s) => s.conversationContinuityMode
-  )
-  const slideMode = settingsStore((s) => s.slideMode)
+  );
+  const slideMode = settingsStore((s) => s.slideMode);
 
-  const { t } = useTranslation()
+  const { t } = useTranslation();
 
   const handleChangeYoutubeMode = (youtubeMode: boolean) => {
-    settingsStore.setState({ youtubeMode })
+    settingsStore.setState({ youtubeMode });
 
     if (youtubeMode) {
-      homeStore.setState({ modalImage: '' })
-      menuStore.setState({ showWebcam: false })
-      settingsStore.setState({ slideMode: false })
-      slideStore.setState({ isPlaying: false })
+      homeStore.setState({ modalImage: '' });
+      menuStore.setState({ showWebcam: false });
+      settingsStore.setState({ slideMode: false });
+      slideStore.setState({ isPlaying: false });
     } else {
-      settingsStore.setState({ youtubePlaying: false })
+      settingsStore.setState({ youtubePlaying: false });
     }
-  }
+  };
 
   return (
     <div className="">
@@ -111,11 +111,11 @@ const YouTube = () => {
                   </TextButton>
                 </div>
               </>
-            )
+            );
           }
         })()}
       </div>
     </div>
-  )
-}
-export default YouTube
+  );
+};
+export default YouTube;

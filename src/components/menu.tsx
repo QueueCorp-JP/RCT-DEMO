@@ -1,112 +1,112 @@
-import React, { useCallback, useRef, useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+import React, { useCallback, useRef, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
-import homeStore from '@/features/stores/home'
-import menuStore from '@/features/stores/menu'
+import homeStore from '@/features/stores/home';
+import menuStore from '@/features/stores/menu';
 import settingsStore, {
   multiModalAIServiceKey,
-} from '@/features/stores/settings'
-import slideStore from '@/features/stores/slide'
-import { AssistantText } from './assistantText'
-import ChatLog from './chatLog'
-import { IconButton } from './iconButton'
-import Settings from './settings'
-import { Webcam } from './webcam'
-import Slides from './slides'
-import Capture from './capture'
-import { multiModalAIServices } from '@/features/stores/settings'
+} from '@/features/stores/settings';
+import slideStore from '@/features/stores/slide';
+import { AssistantText } from './assistantText';
+import ChatLog from './chatLog';
+import { IconButton } from './iconButton';
+import Settings from './settings';
+import { Webcam } from './webcam';
+import Slides from './slides';
+import Capture from './capture';
+import { multiModalAIServices } from '@/features/stores/settings';
 
 export const Menu = () => {
-  const selectAIService = settingsStore((s) => s.selectAIService)
-  const youtubeMode = settingsStore((s) => s.youtubeMode)
-  const youtubePlaying = settingsStore((s) => s.youtubePlaying)
-  const slideMode = settingsStore((s) => s.slideMode)
-  const slideVisible = menuStore((s) => s.slideVisible)
-  const assistantMessage = homeStore((s) => s.assistantMessage)
-  const showWebcam = menuStore((s) => s.showWebcam)
-  const showControlPanel = settingsStore((s) => s.showControlPanel)
-  const showCapture = menuStore((s) => s.showCapture)
-  const slidePlaying = slideStore((s) => s.isPlaying)
-  const showAssistantText = settingsStore((s) => s.showAssistantText)
+  const selectAIService = settingsStore((s) => s.selectAIService);
+  const youtubeMode = settingsStore((s) => s.youtubeMode);
+  const youtubePlaying = settingsStore((s) => s.youtubePlaying);
+  const slideMode = settingsStore((s) => s.slideMode);
+  const slideVisible = menuStore((s) => s.slideVisible);
+  const assistantMessage = homeStore((s) => s.assistantMessage);
+  const showWebcam = menuStore((s) => s.showWebcam);
+  const showControlPanel = settingsStore((s) => s.showControlPanel);
+  const showCapture = menuStore((s) => s.showCapture);
+  const slidePlaying = slideStore((s) => s.isPlaying);
+  const showAssistantText = settingsStore((s) => s.showAssistantText);
 
-  const [showSettings, setShowSettings] = useState(false)
-  const [showChatLog, setShowChatLog] = useState(false)
-  const [showPermissionModal, setShowPermissionModal] = useState(false)
-  const imageFileInputRef = useRef<HTMLInputElement>(null)
+  const [showSettings, setShowSettings] = useState(false);
+  const [showChatLog, setShowChatLog] = useState(false);
+  const [showPermissionModal, setShowPermissionModal] = useState(false);
+  const imageFileInputRef = useRef<HTMLInputElement>(null);
 
-  const selectedSlideDocs = slideStore((state) => state.selectedSlideDocs)
-  const { t } = useTranslation()
+  const selectedSlideDocs = slideStore((state) => state.selectedSlideDocs);
+  const { t } = useTranslation();
 
-  const [markdownContent, setMarkdownContent] = useState('')
+  const [markdownContent, setMarkdownContent] = useState('');
 
   useEffect(() => {
-    if (!selectedSlideDocs) return
+    if (!selectedSlideDocs) return;
 
     fetch(`/slides/${selectedSlideDocs}/slides.md`)
       .then((response) => response.text())
       .then((text) => setMarkdownContent(text))
       .catch((error) =>
         console.error('Failed to fetch markdown content:', error)
-      )
-  }, [selectedSlideDocs])
+      );
+  }, [selectedSlideDocs]);
 
   const handleChangeVrmFile = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
-      const files = event.target.files
-      if (!files) return
+      const files = event.target.files;
+      if (!files) return;
 
-      const file = files[0]
-      if (!file) return
+      const file = files[0];
+      if (!file) return;
 
-      const file_type = file.name.split('.').pop()
+      const file_type = file.name.split('.').pop();
 
       if (file_type === 'vrm') {
-        const blob = new Blob([file], { type: 'application/octet-stream' })
-        const url = window.URL.createObjectURL(blob)
+        const blob = new Blob([file], { type: 'application/octet-stream' });
+        const url = window.URL.createObjectURL(blob);
 
-        const hs = homeStore.getState()
-        hs.viewer.loadVrm(url)
+        const hs = homeStore.getState();
+        hs.viewer.loadVrm(url);
       }
 
-      event.target.value = ''
+      event.target.value = '';
     },
     []
-  )
+  );
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key === '.') {
-        setShowSettings((prevState) => !prevState)
+        setShowSettings((prevState) => !prevState);
       }
-    }
+    };
 
-    window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [])
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
 
   useEffect(() => {
-    console.log('onChangeWebcamStatus')
-    homeStore.setState({ webcamStatus: showWebcam })
+    console.log('onChangeWebcamStatus');
+    homeStore.setState({ webcamStatus: showWebcam });
 
     if (showWebcam) {
       navigator.mediaDevices
         .getUserMedia({ video: true })
         .then(() => {
-          setShowPermissionModal(false)
+          setShowPermissionModal(false);
         })
         .catch(() => {
-          setShowPermissionModal(true)
-        })
+          setShowPermissionModal(true);
+        });
     }
-  }, [showWebcam])
+  }, [showWebcam]);
 
   useEffect(() => {
-    console.log('onChangeCaptureStatus')
-    homeStore.setState({ captureStatus: showCapture })
-  }, [showCapture])
+    console.log('onChangeCaptureStatus');
+    homeStore.setState({ captureStatus: showCapture });
+  }, [showCapture]);
 
   useEffect(() => {
     if (!youtubePlaying) {
@@ -114,19 +114,19 @@ export const Menu = () => {
         youtubeContinuationCount: 0,
         youtubeNoCommentCount: 0,
         youtubeSleepMode: false,
-      })
+      });
     }
-  }, [youtubePlaying])
+  }, [youtubePlaying]);
 
   const toggleCapture = useCallback(() => {
-    menuStore.setState(({ showCapture }) => ({ showCapture: !showCapture }))
-    menuStore.setState({ showWebcam: false }) // Captureを表示するときWebcamを非表示にする
-  }, [])
+    menuStore.setState(({ showCapture }) => ({ showCapture: !showCapture }));
+    menuStore.setState({ showWebcam: false }); // Captureを表示するときWebcamを非表示にする
+  }, []);
 
   const toggleWebcam = useCallback(() => {
-    menuStore.setState(({ showWebcam }) => ({ showWebcam: !showWebcam }))
-    menuStore.setState({ showCapture: false }) // Webcamを表示するときCaptureを非表示にする
-  }, [])
+    menuStore.setState(({ showWebcam }) => ({ showWebcam: !showWebcam }));
+    menuStore.setState({ showCapture: false }); // Webcamを表示するときCaptureを非表示にする
+  }, []);
 
   return (
     <>
@@ -193,14 +193,14 @@ export const Menu = () => {
                         accept="image/*"
                         ref={imageFileInputRef}
                         onChange={(e) => {
-                          const file = e.target.files?.[0]
+                          const file = e.target.files?.[0];
                           if (file) {
-                            const reader = new FileReader()
+                            const reader = new FileReader();
                             reader.onload = (e) => {
-                              const imageUrl = e.target?.result as string
-                              homeStore.setState({ modalImage: imageUrl })
-                            }
-                            reader.readAsDataURL(file)
+                              const imageUrl = e.target?.result as string;
+                              homeStore.setState({ modalImage: imageUrl });
+                            };
+                            reader.readAsDataURL(file);
                           }
                         }}
                       />
@@ -263,11 +263,11 @@ export const Menu = () => {
         accept=".vrm"
         ref={(fileInput) => {
           if (!fileInput) {
-            menuStore.setState({ fileInput: null })
-            return
+            menuStore.setState({ fileInput: null });
+            return;
           }
 
-          menuStore.setState({ fileInput })
+          menuStore.setState({ fileInput });
         }}
         onChange={handleChangeVrmFile}
       />
@@ -277,20 +277,20 @@ export const Menu = () => {
         accept="image/*"
         ref={(bgFileInput) => {
           if (!bgFileInput) {
-            menuStore.setState({ bgFileInput: null })
-            return
+            menuStore.setState({ bgFileInput: null });
+            return;
           }
 
-          menuStore.setState({ bgFileInput })
+          menuStore.setState({ bgFileInput });
         }}
         onChange={(e) => {
-          const file = e.target.files?.[0]
+          const file = e.target.files?.[0];
           if (file) {
-            const imageUrl = URL.createObjectURL(file)
-            homeStore.setState({ backgroundImageUrl: imageUrl })
+            const imageUrl = URL.createObjectURL(file);
+            homeStore.setState({ backgroundImageUrl: imageUrl });
           }
         }}
       />
     </>
-  )
-}
+  );
+};
