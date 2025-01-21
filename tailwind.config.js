@@ -1,5 +1,10 @@
-const { light, dark } = require('@charcoal-ui/theme');
-const { createTailwindConfig } = require('@charcoal-ui/tailwind-config');
+const {
+  light,
+  dark
+} = require('@charcoal-ui/theme');
+const {
+  createTailwindConfig
+} = require('@charcoal-ui/tailwind-config');
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
@@ -17,10 +22,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#856292',
-        'primary-hover': '#8E76A1',
-        'primary-press': '#988BB0',
-        'primary-disabled': '#6F48694D',
+        primary: '#000000',
+        'primary-hover': '#1a1a1a',
+        'primary-press': '#333333',
+        'primary-disabled': '#0000004D',
         secondary: '#FF617F',
         'secondary-hover': '#FF849B',
         'secondary-press': '#FF9EB1',
