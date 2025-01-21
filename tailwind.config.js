@@ -26,11 +26,11 @@ module.exports = {
         'primary-hover': '#1a1a1a',
         'primary-press': '#333333',
         'primary-disabled': '#0000004D',
-        secondary: '#FF617F',
-        'secondary-hover': '#FF849B',
-        'secondary-press': '#FF9EB1',
-        'secondary-disabled': '#FF617F4D',
-        base: '#FBE2CA',
+        secondary: '#3B82F6',
+        'secondary-hover': '#60A5FA',
+        'secondary-press': '#93C5FD',
+        'secondary-disabled': '#3B82F64D',
+        base: '#F3F4F6',
         'text-primary': '#514062',
 
         // トースト用のより鮮明な色定義
