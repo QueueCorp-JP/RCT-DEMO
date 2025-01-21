@@ -108,6 +108,7 @@ export const speakMessageHandler = async (receivedMessage: string) => {
       () => {
         homeStore.setState({
           assistantMessage: assistantMessage.join(' '),
+          isSpeaking: true
         });
         hs.incrementChatProcessingCount();
         // スライド用のメッセージを更新
@@ -118,6 +119,7 @@ export const speakMessageHandler = async (receivedMessage: string) => {
         currentSlideMessages.shift();
         homeStore.setState({
           slideMessages: currentSlideMessages,
+          isSpeaking: false
         });
       }
     );
@@ -266,6 +268,7 @@ export const processAIResponse = async (
             () => {
               homeStore.setState({
                 assistantMessage: currentAssistantMessage,
+                isSpeaking: true
               });
               hs.incrementChatProcessingCount();
               // スライド用のメッセージを更新
@@ -279,6 +282,7 @@ export const processAIResponse = async (
               currentSlideMessages.shift();
               homeStore.setState({
                 slideMessages: currentSlideMessages,
+                isSpeaking: false
               });
             }
           );
@@ -307,6 +311,7 @@ export const processAIResponse = async (
           () => {
             homeStore.setState({
               assistantMessage: currentAssistantMessage,
+              isSpeaking: true
             });
             hs.incrementChatProcessingCount();
             // スライド用のメッセージを更新
@@ -320,6 +325,7 @@ export const processAIResponse = async (
             currentSlideMessages.shift();
             homeStore.setState({
               slideMessages: currentSlideMessages,
+              isSpeaking: false
             });
           }
         );

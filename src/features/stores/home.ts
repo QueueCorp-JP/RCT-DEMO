@@ -21,6 +21,10 @@ export interface TransientState {
   chatProcessingCount: number;
   incrementChatProcessingCount: () => void;
   decrementChatProcessingCount: () => void;
+  stopSpeech: boolean;
+  setStopSpeech: (stop: boolean) => void;
+  isSpeaking: boolean;
+  setIsSpeaking: (speaking: boolean) => void;
   backgroundImageUrl: string;
   modalImage: string;
   triggerShutter: boolean;
@@ -70,6 +74,10 @@ const homeStore = create<HomeState>()(
         set(() => ({ isCubismCoreLoaded: loaded })),
       isLive2dLoaded: false,
       setIsLive2dLoaded: (loaded) => set(() => ({ isLive2dLoaded: loaded })),
+      stopSpeech: false,
+      setStopSpeech: (stop) => set(() => ({ stopSpeech: stop })),
+      isSpeaking: false,
+      setIsSpeaking: (speaking) => set(() => ({ isSpeaking: speaking })),
     }),
     {
       name: 'aitube-kit-home',

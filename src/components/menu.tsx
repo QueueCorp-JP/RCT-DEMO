@@ -15,12 +15,19 @@ import { Webcam } from './webcam';
 import Slides from './slides';
 import Capture from './capture';
 import { multiModalAIServices } from '@/features/stores/settings';
+import { Live2DHandler } from '../features/messages/live2dHandler';
+import { SpeakQueue } from '../features/messages/speakQueue';
+
+const speakQueue = SpeakQueue.getInstance();
 
 export const Menu = () => {
   const selectAIService = settingsStore((s) => s.selectAIService);
   const youtubeMode = settingsStore((s) => s.youtubeMode);
   const youtubePlaying = settingsStore((s) => s.youtubePlaying);
   const slideMode = settingsStore((s) => s.slideMode);
+  const chatProcessing = homeStore((s) => s.chatProcessing);
+  const isSpeaking = homeStore((s) => s.isSpeaking);
+  const setStopSpeech = homeStore((s) => s.setStopSpeech);
   const slideVisible = menuStore((s) => s.slideVisible);
   const assistantMessage = homeStore((s) => s.assistantMessage);
   const showWebcam = menuStore((s) => s.showWebcam);
@@ -167,13 +174,88 @@ export const Menu = () => {
                   selectAIService as multiModalAIServiceKey
                 ) && (
                   <>
-                    <div className="order-3">
-                      <IconButton
-                        iconName="24/ShareIos"
-                        isProcessing={false}
-                        onClick={toggleCapture}
-                      />
-                    </div>
+                    <>
+                      {(chatProcessing || isSpeaking || homeStore.getState().chatProcessingCount > 0 || speakQueue.hasActiveTasks()) && (
+                        <div className="order-3">
+                          <IconButton
+                            iconName="24/Close"
+                            label={t('StopSpeech')}
+                            isProcessing={false}
+                            onClick={async () => {
+                              try {
+                                // まず停止フラグをセット
+                                homeStore.setState({ stopSpeech: true });
+                                
+                                // キューをクリアして音声を強制停止（複数回試行）
+                                const maxAttempts = 5;
+                                for (let i = 0; i < maxAttempts; i++) {
+                                  try {
+                                    await speakQueue.clearQueue();
+                                    
+                                    // 音声を強制停止
+                                    const hs = homeStore.getState();
+                                    if (hs.viewer.model) {
+                                      await hs.viewer.model.stopSpeaking();
+                                      await hs.viewer.model.stopAudio();
+                                      // 再度停止を確認
+                                      await hs.viewer.model.stopSpeaking();
+                                    }
+          
+                                    // 少し待機して確実に停止
+                                    await new Promise(resolve => setTimeout(resolve, 100));
+          
+                                    // 停止確認
+                                    if (!hs.viewer.model?.isPlaying()) {
+                                      break;
+                                    }
+                                  } catch (e) {
+                                    console.error(`Attempt ${i + 1} to stop audio failed:`, e);
+                                    // 最後の試行でエラーの場合は投げる
+                                    if (i === maxAttempts - 1) throw e;
+                                    // エラー時は少し長めに待機
+                                    await new Promise(resolve => setTimeout(resolve, 200));
+                                  }
+                                }
+          
+                                // 最後にもう一度強制停止を試行
+                                const hs = homeStore.getState();
+                                if (hs.viewer.model) {
+                                  await hs.viewer.model.stopSpeaking();
+                                  await hs.viewer.model.stopAudio();
+                                }
+          
+                                // 長めに待ってから状態をリセット
+                                await new Promise(resolve => setTimeout(resolve, 300));
+          
+                                // 状態をリセット（isSpeakingはtrueのまま保持して、ボタンを表示し続ける）
+                                homeStore.setState({
+                                  chatProcessing: false,
+                                  stopSpeech: false,
+                                  chatProcessingCount: 0,
+                                  assistantMessage: ''
+                                });
+                              } catch (error) {
+                                console.error('Error stopping speech:', error);
+                                // エラー時も状態をリセット（isSpeakingはtrueのまま保持）
+                                homeStore.setState({
+                                  chatProcessing: false,
+                                  stopSpeech: false,
+                                  chatProcessingCount: 0
+                                });
+                              }
+                            }}
+                            className="bg-secondary hover:bg-secondary-hover active:bg-secondary-press"
+                          />
+                        </div>
+                      )}
+                      <div className="order-4">
+                        <IconButton
+                          iconName="24/ShareIos"
+                          isProcessing={false}
+                          onClick={toggleCapture}
+                        />
+                      </div>
+                    </>
                     <div className="order-4">
                       <IconButton
                         iconName="24/Camera"

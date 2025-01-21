@@ -74,6 +74,18 @@ export class Model {
   /**
    * 音声を再生し、リップシンクを行う
    */
+  public async stopSpeaking() {
+    await this._lipSync?.stop();
+  }
+
+  public stopAudio() {
+    this._lipSync?.stop();
+  }
+
+  public isPlaying(): boolean {
+    return this._lipSync?.isPlaying ?? false;
+  }
+
   public async speak(
     buffer: ArrayBuffer,
     talk: Talk,

@@ -24,7 +24,7 @@ interface EnglishToJapanese {
 
 const typedEnglishToJapanese = englishToJapanese as EnglishToJapanese;
 
-const speakQueue = new SpeakQueue();
+const speakQueue = SpeakQueue.getInstance();
 
 function preprocessMessage(
   message: string,
@@ -52,9 +52,42 @@ const createSpeakCharacter = () => {
   let lastTime = 0;
   let prevFetchPromise: Promise<unknown> = Promise.resolve();
 
-  return (talk: Talk, onStart?: () => void, onComplete?: () => void) => {
+  return async (talk: Talk, onStart?: () => void, onComplete?: () => void) => {
     const ss = settingsStore.getState();
+    const hs = homeStore.getState();
+    
+    // 音声停止フラグがセットされたら即座に停止
+    if (hs.stopSpeech) {
+      try {
+        await speakQueue.clearQueue();
+        // 少し待ってから完了コールバックを呼び出す
+        await new Promise(resolve => setTimeout(resolve, 100));
+        onComplete?.();
+      } catch (error) {
+        console.error('Error stopping speech:', error);
+      }
+      return;
+    }
+
+    // 音声再生中に停止フラグがセットされた場合の処理
+    const checkStopFlag = async () => {
+      const currentHs = homeStore.getState();
+      if (currentHs.stopSpeech) {
+        await speakQueue.clearQueue();
+        // 少し待ってから完了コールバックを呼び出す
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return true;
+      }
+      return false;
+    };
+
     onStart?.();
+
+    // 停止フラグをチェック
+    if (await checkStopFlag()) {
+      onComplete?.();
+      return;
+    }
 
     const processedMessage = preprocessMessage(talk.message, ss);
     if (!processedMessage && !talk.buffer) {

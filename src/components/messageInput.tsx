@@ -24,6 +24,7 @@ export const MessageInput = ({
   onClickSendButton,
 }: Props) => {
   const chatProcessing = homeStore((s) => s.chatProcessing);
+  const setStopSpeech = homeStore((s) => s.setStopSpeech);
   const slidePlaying = slideStore((s) => s.isPlaying);
   const [rows, setRows] = useState(1);
   const [loadingDots, setLoadingDots] = useState('');
@@ -120,29 +121,28 @@ export const MessageInput = ({
               disabled={chatProcessing}
               onClick={handleMicClick}
             />
-            <textarea
-              ref={textareaRef}
-              placeholder={
-                chatProcessing
-                  ? `${t('AnswerGenerating')}${loadingDots}`
-                  : t('EnterYourQuestion')
-              }
-              onChange={onChangeUserMessage}
-              onKeyDown={handleKeyPress}
-              disabled={chatProcessing || slidePlaying || realtimeAPIMode}
-              className="bg-surface1 hover:bg-surface1-hover focus:bg-surface1 disabled:bg-surface1-disabled disabled:text-primary-disabled rounded-16 w-full px-16 text-text-primary typography-16 font-bold disabled"
-              value={userMessage}
-              rows={rows}
-              style={{ lineHeight: '1.5', padding: '8px 16px', resize: 'none' }}
-            ></textarea>
-
-            <IconButton
-              iconName="24/Send"
-              className="bg-secondary hover:bg-secondary-hover active:bg-secondary-press disabled:bg-secondary-disabled"
-              isProcessing={chatProcessing}
-              disabled={chatProcessing || !userMessage || realtimeAPIMode}
-              onClick={onClickSendButton}
-            />
+           <textarea
+             ref={textareaRef}
+             placeholder={
+               chatProcessing
+                 ? `${t('AnswerGenerating')}${loadingDots}`
+                 : t('EnterYourQuestion')
+             }
+             onChange={onChangeUserMessage}
+             onKeyDown={handleKeyPress}
+             disabled={chatProcessing || slidePlaying || realtimeAPIMode}
+             className="bg-surface1 hover:bg-surface1-hover focus:bg-surface1 disabled:bg-surface1-disabled disabled:text-primary-disabled rounded-16 w-full px-16 text-text-primary typography-16 font-bold disabled"
+             value={userMessage}
+             rows={rows}
+             style={{ lineHeight: '1.5', padding: '8px 16px', resize: 'none' }}
+           />
+           <IconButton
+             iconName="24/Send"
+             className="bg-secondary hover:bg-secondary-hover active:bg-secondary-press disabled:bg-secondary-disabled"
+             isProcessing={chatProcessing}
+             disabled={chatProcessing || !userMessage || realtimeAPIMode}
+             onClick={onClickSendButton}
+           />
           </div>
         </div>
       </div>
